@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:imapp/utils/rsa/index.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -11,27 +10,118 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
+    // 视图层
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('登录'),
-        centerTitle: true,
+      backgroundColor: Colors.white,
+      body: Column(
+        children: [logoWidget(), loginText(), subTitle(), accountInput()],
       ),
-      body: Container(
-        child: ElevatedButton(onPressed: () async{
-          String getCode = ''; 
-          String decode = '';
-          await encodeString('content').then((value) {
-            getCode = value;
-          });
-          print('按钮后的加密数据：'+ getCode);
+    );
+  }
+}
 
-          await decodeString(getCode).then((value) {
-            decode = value;
-          });
-          print('按钮后的解密数据：' + decode);
+// logo
+class logoWidget extends StatelessWidget {
+  const logoWidget({super.key});
 
-        },
-        child: Text('加密'),),
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        padding: const EdgeInsets.only(top: 100),
+        child: Center(child: Image.asset('assets/images/logo.png')));
+  }
+}
+
+// title
+class loginText extends StatelessWidget {
+  const loginText({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.only(left: 50, top: 40),
+      child: const Align(
+        alignment: Alignment(-1, 0),
+        child: Text(
+          '登录',
+          style: TextStyle(fontSize: 40, fontFamily: '宋体'),
+        ),
+      ),
+    );
+  }
+}
+
+// subtitle
+class subTitle extends StatelessWidget {
+  const subTitle({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.only(left: 50),
+      child: const Align(
+        alignment: Alignment(-1, 0),
+        child: Text(
+          '欢迎来到我的app！',
+          style: TextStyle(fontSize: 24, fontFamily: '宋体', color: Colors.grey),
+        ),
+      ),
+    );
+  }
+}
+
+// input 输入框
+class accountInput extends StatefulWidget {
+  const accountInput({super.key});
+
+  @override
+  State<accountInput> createState() => _accountInputState();
+}
+
+class _accountInputState extends State<accountInput> {
+  @override
+  Widget build(BuildContext context) {
+    var account = '';
+    return Container(
+      padding: const EdgeInsets.only(left: 40, right: 40, top: 40),
+      child: Column(
+        children: [
+          const TextField(
+            style: TextStyle(fontSize: 20),
+            autofocus: true,
+            decoration: InputDecoration(
+                border: OutlineInputBorder(), labelText: '请输入账号'),
+          ),
+          Container(
+            padding: const EdgeInsets.only(top: 40),
+            child: const TextField(
+              style: TextStyle(fontSize: 20),
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(), labelText: '请输入密码'),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.only(left: 80, right: 80, top: 40),
+            child: Flex(
+              direction: Axis.horizontal,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                OutlinedButton(
+                  onPressed: () {},
+                  child: const Text('登录'),
+                  style: ButtonStyle(
+                      minimumSize: MaterialStateProperty.all(Size(100, 50))),
+                ),
+                OutlinedButton(
+                  onPressed: () {},
+                  child: const Text('注册'),
+                  style: ButtonStyle(
+                      minimumSize: MaterialStateProperty.all(Size(100, 50))),
+                ),
+              ],
+            ),
+          )
+        ],
       ),
     );
   }
