@@ -1,44 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/src/widgets/container.dart';
+import 'package:flutter/src/widgets/framework.dart';
+import 'package:imapp/utils/Reg.dart';
 
-import '../utils/Reg.dart';
-import '../viewmodel/login_viewmodel.dart';
-
-class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+class RegistryView extends StatefulWidget {
+  const RegistryView({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  State<RegistryView> createState() => _RegistryViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _RegistryViewState extends State<RegistryView> {
   @override
   Widget build(BuildContext context) {
-    // 视图层
     return Scaffold(
-      backgroundColor: Colors.white,
+      appBar: AppBar(
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(Icons.arrow_back));
+          },
+        ),
+      ),
       body: Column(
-        children: [logoWidget(), loginText(), subTitle(), accountInput()],
+        children: [registryWidget(), registryText(), accountInput()],
       ),
     );
   }
 }
 
 // logo
-class logoWidget extends StatelessWidget {
-  const logoWidget({super.key});
+class registryWidget extends StatelessWidget {
+  const registryWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: const EdgeInsets.only(top: 100),
+        padding: const EdgeInsets.only(top: 40),
         child: Center(child: Image.asset('assets/images/logo.png')));
   }
 }
 
 // title
-class loginText extends StatelessWidget {
-  const loginText({super.key});
+class registryText extends StatelessWidget {
+  const registryText({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -47,27 +56,8 @@ class loginText extends StatelessWidget {
       child: const Align(
         alignment: Alignment(-1, 0),
         child: Text(
-          '登录',
+          '注册',
           style: TextStyle(fontSize: 40, fontFamily: '宋体'),
-        ),
-      ),
-    );
-  }
-}
-
-// subtitle
-class subTitle extends StatelessWidget {
-  const subTitle({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(left: 50),
-      child: const Align(
-        alignment: Alignment(-1, 0),
-        child: Text(
-          '欢迎来到我的app！',
-          style: TextStyle(fontSize: 24, fontFamily: '宋体', color: Colors.grey),
         ),
       ),
     );
@@ -83,12 +73,11 @@ class accountInput extends StatefulWidget {
 }
 
 class _accountInputState extends State<accountInput> {
-  LoginViewModelData data = new LoginViewModelData();
   // 唯一标识
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    var account = '';
+    late int _account;
     return Form(
         key: _formKey,
         child: Container(
@@ -105,25 +94,19 @@ class _accountInputState extends State<accountInput> {
                     return '输入必须为手机号！';
                   }
                 },
-                style: const TextStyle(fontSize: 20),
-                maxLength: 11,
-                keyboardType: TextInputType.phone,
-                autofocus: true,
                 // 限制输入为数字
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp('[0-9]'))
                 ],
+                style: const TextStyle(fontSize: 20),
+                keyboardType: TextInputType.number,
+                maxLength: 11,
+                autofocus: true,
                 decoration: const InputDecoration(
                     border: OutlineInputBorder(), labelText: '请输入手机号'),
-                onChanged: (value) {
-                  setState(() {
-                    data.account = value;
-                    print(data.account);
-                  });
-                },
               ),
               Container(
-                padding: const EdgeInsets.only(top: 40),
+                padding: const EdgeInsets.only(top: 20),
                 child: TextFormField(
                   // 验证
                   validator: (value) {
@@ -135,22 +118,31 @@ class _accountInputState extends State<accountInput> {
                   maxLength: 20,
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(), labelText: '请输入密码'),
-                  onChanged: (value) {
-                    setState(() {
-                      data.pwd = value;
-                      print(data.pwd);
-                    });
-                  },
                 ),
               ),
               Container(
-                padding: const EdgeInsets.only(top: 40),
+                padding: const EdgeInsets.only(top: 20),
+                child: TextFormField(
+                  // 验证
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return '输入内容不能为空！';
+                    }
+                  },
+                  style: const TextStyle(fontSize: 20),
+                  maxLength: 20,
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(), labelText: '确认密码'),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.only(top: 20),
                 child: Flex(
                   direction: Axis.horizontal,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      padding: EdgeInsets.only(right: 20),
+                      padding: const EdgeInsets.only(right: 20),
                       width: 230,
                       child: TextFormField(
                         // 验证
@@ -163,23 +155,19 @@ class _accountInputState extends State<accountInput> {
                         style: const TextStyle(fontSize: 20),
                         decoration: const InputDecoration(
                             border: OutlineInputBorder(), labelText: '请输入验证码'),
-                        onChanged: (value) {
-                          data.validCode = value;
-                          print(data.validCode);
-                        },
                       ),
                     ),
                     ElevatedButton(
                         onPressed: () {},
                         style: ButtonStyle(
                             minimumSize:
-                                MaterialStateProperty.all(Size(100, 60))),
+                                MaterialStateProperty.all(const Size(100, 60))),
                         child: const Text('获取验证码'))
                   ],
                 ),
               ),
               Container(
-                padding: const EdgeInsets.only(left: 80, right: 80, top: 40),
+                padding: const EdgeInsets.only(top: 50),
                 child: Flex(
                   direction: Axis.horizontal,
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -192,16 +180,7 @@ class _accountInputState extends State<accountInput> {
                       },
                       style: ButtonStyle(
                           minimumSize:
-                              MaterialStateProperty.all(Size(100, 50))),
-                      child: const Text('登录'),
-                    ),
-                    OutlinedButton(
-                      onPressed: () {
-                        Navigator.of(context).pushNamed('registry');
-                      },
-                      style: ButtonStyle(
-                          minimumSize:
-                              MaterialStateProperty.all(Size(100, 50))),
+                              MaterialStateProperty.all(Size(200, 60))),
                       child: const Text('注册'),
                     ),
                   ],
