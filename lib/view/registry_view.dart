@@ -4,6 +4,8 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:imapp/utils/Reg.dart';
 
+import '../viewmodel/registry_viewmodel.dart';
+
 class RegistryView extends StatefulWidget {
   const RegistryView({super.key});
 
@@ -75,6 +77,7 @@ class accountInput extends StatefulWidget {
 class _accountInputState extends State<accountInput> {
   // 唯一标识
   final _formKey = GlobalKey<FormState>();
+  RegistryViewModelData data = new RegistryViewModelData();
   @override
   Widget build(BuildContext context) {
     late int _account;
@@ -104,6 +107,12 @@ class _accountInputState extends State<accountInput> {
                 autofocus: true,
                 decoration: const InputDecoration(
                     border: OutlineInputBorder(), labelText: '请输入手机号'),
+                onChanged: (value) {
+                  setState(() {
+                    data.account = value;
+                    print(data.account);
+                  });
+                },
               ),
               Container(
                 padding: const EdgeInsets.only(top: 20),
@@ -118,6 +127,12 @@ class _accountInputState extends State<accountInput> {
                   maxLength: 20,
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(), labelText: '请输入密码'),
+                  onChanged: (value) {
+                    setState(() {
+                      data.pwd = value;
+                      print(data.pwd);
+                    });
+                  },
                 ),
               ),
               Container(
@@ -133,6 +148,10 @@ class _accountInputState extends State<accountInput> {
                   maxLength: 20,
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(), labelText: '确认密码'),
+                  onChanged: (value) {
+                    data.confirmPwd = value;
+                    print(data.confirmPwd);
+                  },
                 ),
               ),
               Container(
@@ -155,6 +174,10 @@ class _accountInputState extends State<accountInput> {
                         style: const TextStyle(fontSize: 20),
                         decoration: const InputDecoration(
                             border: OutlineInputBorder(), labelText: '请输入验证码'),
+                        onChanged: (value) {
+                          data.validCode = value;
+                          print(data.validCode);
+                        },
                       ),
                     ),
                     ElevatedButton(
