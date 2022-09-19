@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:imapp/model/login_model.dart';
 
 import '../utils/Reg.dart';
 import '../viewmodel/login_viewmodel.dart';
@@ -18,7 +19,12 @@ class _LoginViewState extends State<LoginView> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
-        children: [logoWidget(), loginText(), subTitle(), accountInput()],
+        children: [
+          const logoWidget(),
+          const loginText(),
+          const subTitle(),
+          const accountInput()
+        ],
       ),
     );
   }
@@ -32,7 +38,14 @@ class logoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         padding: const EdgeInsets.only(top: 100),
-        child: Center(child: Image.asset('assets/images/logo.png')));
+        child: Container(
+          height: 150,
+          width: 150,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(80)),
+              image:
+                  DecorationImage(image: AssetImage('assets/images/logo.png'))),
+        ));
   }
 }
 
@@ -84,6 +97,7 @@ class accountInput extends StatefulWidget {
 
 class _accountInputState extends State<accountInput> {
   LoginViewModelData data = new LoginViewModelData();
+  LoginModel sendData = new LoginModel();
   // 唯一标识
   final _formKey = GlobalKey<FormState>();
   @override
@@ -150,7 +164,7 @@ class _accountInputState extends State<accountInput> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      padding: EdgeInsets.only(right: 20),
+                      padding: const EdgeInsets.only(right: 20),
                       width: 230,
                       child: TextFormField(
                         // 验证
@@ -173,7 +187,7 @@ class _accountInputState extends State<accountInput> {
                         onPressed: () {},
                         style: ButtonStyle(
                             minimumSize:
-                                MaterialStateProperty.all(Size(100, 60))),
+                                MaterialStateProperty.all(const Size(100, 60))),
                         child: const Text('获取验证码'))
                   ],
                 ),
@@ -185,14 +199,17 @@ class _accountInputState extends State<accountInput> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     OutlinedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           print('通过了验证');
+                          var result = await sendData.sendUserInfo(
+                              data.account, data.pwd, data.validCode);
+                          print(result);
                         }
                       },
                       style: ButtonStyle(
                           minimumSize:
-                              MaterialStateProperty.all(Size(100, 50))),
+                              MaterialStateProperty.all(const Size(100, 50))),
                       child: const Text('登录'),
                     ),
                     OutlinedButton(
@@ -201,7 +218,7 @@ class _accountInputState extends State<accountInput> {
                       },
                       style: ButtonStyle(
                           minimumSize:
-                              MaterialStateProperty.all(Size(100, 50))),
+                              MaterialStateProperty.all(const Size(100, 50))),
                       child: const Text('注册'),
                     ),
                   ],

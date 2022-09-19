@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:imapp/global/Global.dart';
 import 'package:imapp/routes/index.dart';
 
 void main() {

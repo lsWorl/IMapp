@@ -43,7 +43,14 @@ class registryWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         padding: const EdgeInsets.only(top: 40),
-        child: Center(child: Image.asset('assets/images/logo.png')));
+        child: Container(
+          height: 150,
+          width: 150,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(80)),
+              image:
+                  DecorationImage(image: AssetImage('assets/images/logo.png'))),
+        ));
   }
 }
 

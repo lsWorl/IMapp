@@ -1,15 +1,16 @@
-// ignore: slash_for_doc_comments
+import 'package:imapp/model/login_model.dart';
+
 /**
    * 数据层
    * Data
    */
 class LoginViewModelData {
   // 账号
-  late String _account;
+  String _account = '';
   // 密码
-  late String _pwd;
+  String _pwd = '';
   // 验证码
-  late String _validCode;
+  String _validCode = '';
 
   set account(var value) {
     _account = value;
