@@ -143,8 +143,22 @@ class _accountInputState extends State<accountInput> {
                   },
                   style: const TextStyle(fontSize: 20),
                   maxLength: 20,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(), labelText: '请输入6-20位请输入密码'),
+                  obscureText: data.isShowPwd,
+
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: '请输入6-20位密码',
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            data.isShowPwd = !data.isShowPwd;
+                          });
+                        },
+                        icon: Icon(data.isShowPwd
+                            ? Icons.visibility_off
+                            : Icons.visibility),
+                        color: Theme.of(context).primaryColorDark,
+                      )),
                   onChanged: (value) {
                     setState(() {
                       data.pwd = value;
@@ -168,8 +182,21 @@ class _accountInputState extends State<accountInput> {
                   },
                   style: const TextStyle(fontSize: 20),
                   maxLength: 20,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(), labelText: '请输入6-20位确认密码'),
+                  obscureText: data.isShowConfirmPwd,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: '请输入6-20位确认密码',
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            data.isShowConfirmPwd = !data.isShowConfirmPwd;
+                          });
+                        },
+                        icon: Icon(data.isShowConfirmPwd
+                            ? Icons.visibility_off
+                            : Icons.visibility),
+                        color: Theme.of(context).primaryColorDark,
+                      )),
                   onChanged: (value) {
                     data.confirmPwd = value;
 
@@ -242,8 +269,6 @@ class _accountInputState extends State<accountInput> {
                             result = json.decode(value.toString());
                           });
                           if (result['ok'] == 1) {
-                            print('注册成功');
-
                             showAlertMsg(context, '注册成功！请点击确定按钮跳转到登录界面进行登录！');
                           } else if (result['ok'] == 2) {
                             showAlertMsg(context, '验证码错误');

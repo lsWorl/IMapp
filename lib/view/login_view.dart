@@ -152,8 +152,21 @@ class _accountInputState extends State<accountInput> {
                   },
                   style: const TextStyle(fontSize: 20),
                   maxLength: 20,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(), labelText: '请输入密码'),
+                  obscureText: data.isShowPwd,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: '请输入密码',
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            data.isShowPwd = !data.isShowPwd;
+                          });
+                        },
+                        icon: Icon(data.isShowPwd
+                            ? Icons.visibility_off
+                            : Icons.visibility),
+                        color: Theme.of(context).primaryColorDark,
+                      )),
                   onChanged: (value) {
                     setState(() {
                       data.pwd = value;
@@ -233,6 +246,8 @@ class _accountInputState extends State<accountInput> {
                             showAlertMsg(context, '验证码错误');
                           } else if (result['ok'] == 3) {
                             showAlertMsg(context, '账号或密码错误！');
+                          } else {
+                            showAlertMsg(context, '服务器繁忙中，请稍后再试...');
                           }
                         }
                       },

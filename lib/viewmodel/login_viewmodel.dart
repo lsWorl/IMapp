@@ -11,6 +11,8 @@ class LoginViewModelData {
   String _pwd = '';
   // 验证码
   String _validCode = '';
+  // 控制密码框是否显示 true为不显示
+  bool _isShowPwd = true;
 
   set account(var value) {
     _account = value;
@@ -34,5 +36,13 @@ class LoginViewModelData {
 
   String get validCode {
     return _validCode;
+  }
+
+  set isShowPwd(var value) {
+    _isShowPwd = value;
+  }
+
+  bool get isShowPwd {
+    return _isShowPwd;
   }
 }
