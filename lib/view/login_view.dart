@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:imapp/component/ShowValidCode.dart';
+import 'package:imapp/http/api.dart';
 import 'package:imapp/model/login_model.dart';
 
 import '../utils/Reg.dart';
@@ -98,11 +102,12 @@ class accountInput extends StatefulWidget {
 class _accountInputState extends State<accountInput> {
   LoginViewModelData data = new LoginViewModelData();
   LoginModel sendData = new LoginModel();
+  // 公用api
+  ReqApi api = new ReqApi();
   // 唯一标识
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    var account = '';
     return Form(
         key: _formKey,
         child: Container(
@@ -184,7 +189,18 @@ class _accountInputState extends State<accountInput> {
                       ),
                     ),
                     ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          api.GetValidCode().then((value) {
+                            Map<String, dynamic> result =
+                                json.decode(value.toString());
+
+                            if (result['ok'] == 1) {
+                              data.validCode = result['data']['validCode'];
+                            }
+                            print(data.validCode);
+                            showAlertMsg(context, data.validCode);
+                          });
+                        },
                         style: ButtonStyle(
                             minimumSize:
                                 MaterialStateProperty.all(const Size(100, 60))),
@@ -201,10 +217,23 @@ class _accountInputState extends State<accountInput> {
                     OutlinedButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          print('通过了验证');
-                          var result = await sendData.sendUserInfo(
-                              data.account, data.pwd, data.validCode);
+                          late Map<String, dynamic> result;
+                          await sendData
+                              .sendUserInfo(
+                                  data.account, data.pwd, data.validCode)
+                              .then((value) {
+                            result = json.decode(value.toString());
+                          });
                           print(result);
+                          if (result['ok'] == 1) {
+                            // 跳转后并销毁路由
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                                'index', (router) => router == null);
+                          } else if (result['ok'] == 2) {
+                            showAlertMsg(context, '验证码错误');
+                          } else if (result['ok'] == 3) {
+                            showAlertMsg(context, '账号或密码错误！');
+                          }
                         }
                       },
                       style: ButtonStyle(

@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:imapp/utils/Reg.dart';
 
+import '../component/ShowValidCode.dart';
+import '../http/api.dart';
+import '../model/registry_model.dart';
 import '../viewmodel/registry_viewmodel.dart';
 
 class RegistryView extends StatefulWidget {
@@ -87,7 +92,9 @@ class _accountInputState extends State<accountInput> {
   RegistryViewModelData data = new RegistryViewModelData();
   @override
   Widget build(BuildContext context) {
-    late int _account;
+    RegistryModel sendData = new RegistryModel();
+    // 公用api
+    ReqApi api = new ReqApi();
     return Form(
         key: _formKey,
         child: Container(
@@ -128,12 +135,16 @@ class _accountInputState extends State<accountInput> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return '输入内容不能为空！';
+                    } else if (value != data.confirmPwd) {
+                      return '两次输入的密码不一致！';
+                    } else if (value.length < 6) {
+                      return '请输入6位以上的密码！';
                     }
                   },
                   style: const TextStyle(fontSize: 20),
                   maxLength: 20,
                   decoration: const InputDecoration(
-                      border: OutlineInputBorder(), labelText: '请输入密码'),
+                      border: OutlineInputBorder(), labelText: '请输入6-20位请输入密码'),
                   onChanged: (value) {
                     setState(() {
                       data.pwd = value;
@@ -149,14 +160,19 @@ class _accountInputState extends State<accountInput> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return '输入内容不能为空！';
+                    } else if (value != data.pwd) {
+                      return '两次输入的密码不一致！';
+                    } else if (value.length < 6) {
+                      return '请输入6位以上的密码！';
                     }
                   },
                   style: const TextStyle(fontSize: 20),
                   maxLength: 20,
                   decoration: const InputDecoration(
-                      border: OutlineInputBorder(), labelText: '确认密码'),
+                      border: OutlineInputBorder(), labelText: '请输入6-20位确认密码'),
                   onChanged: (value) {
                     data.confirmPwd = value;
+
                     print(data.confirmPwd);
                   },
                 ),
@@ -188,7 +204,19 @@ class _accountInputState extends State<accountInput> {
                       ),
                     ),
                     ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          api.GetValidCode().then((value) {
+                            Map<String, dynamic> responseData =
+                                json.decode(value.toString());
+
+                            if (responseData['ok'] == 1) {
+                              data.validCode =
+                                  responseData['data']['validCode'];
+                            }
+                            print(data.validCode);
+                            showAlertMsg(context, data.validCode);
+                          });
+                        },
                         style: ButtonStyle(
                             minimumSize:
                                 MaterialStateProperty.all(const Size(100, 60))),
@@ -203,9 +231,27 @@ class _accountInputState extends State<accountInput> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     OutlinedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          print('通过了验证');
+                          late Map<String, dynamic> result;
+                          await sendData
+                              .sendUserInfo(
+                                  data.account, data.pwd, data.validCode)
+                              .then((value) {
+                            print(value);
+                            result = json.decode(value.toString());
+                          });
+                          if (result['ok'] == 1) {
+                            print('注册成功');
+
+                            showAlertMsg(context, '注册成功！请点击确定按钮跳转到登录界面进行登录！');
+                          } else if (result['ok'] == 2) {
+                            showAlertMsg(context, '验证码错误');
+                            print('验证码错误');
+                          } else if (result['ok'] == 3) {
+                            showAlertMsg(context, '手机号已存在!');
+                            print('手机号已存在');
+                          }
                         }
                       },
                       style: ButtonStyle(
