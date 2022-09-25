@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
           primaryColor: Colors.white),
       routes: routes,
       // 默认路由
-      initialRoute: '/',
+      initialRoute: 'index',
     );
   }
 }
