@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:imapp/component/ImageButton.dart';
+import 'package:imapp/component/image_button.dart';
 import 'package:imapp/view/indexChildren/chatList_view.dart';
 import 'package:imapp/view/indexChildren/contacts_view.dart';
 import 'package:imapp/view/indexChildren/discover_view.dart';

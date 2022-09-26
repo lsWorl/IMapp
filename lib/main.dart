@@ -25,9 +25,11 @@ class MyApp extends StatelessWidget {
           // Notice that the counter didn't reset back to zero; the application
           // is not restarted.
           primaryColor: Colors.white),
-      routes: routes,
+      // routes: routes,
       // 默认路由
       initialRoute: 'index',
+      // 路由守卫
+      onGenerateRoute: onGenerateRoute,
     );
   }
 }

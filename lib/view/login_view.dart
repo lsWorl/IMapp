@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:imapp/component/ShowValidCode.dart';
+import 'package:imapp/component/show_valid_code.dart';
 import 'package:imapp/http/api.dart';
 import 'package:imapp/model/login_model.dart';
 
-import '../utils/Reg.dart';
+import '../utils/reg.dart';
 import '../viewmodel/login_viewmodel.dart';
 
 class LoginView extends StatefulWidget {

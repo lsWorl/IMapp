@@ -1,7 +1,7 @@
 import 'package:flutter/rendering.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import '../../component/ImageButton.dart';
+import '../../component/image_button.dart';
 import 'package:flutter/material.dart';
 
 class ChatListView extends StatefulWidget {
@@ -56,7 +56,9 @@ class _ChatListViewState extends State<ChatListView> {
       color: Colors.white,
       child: InkWell(
         onTap: () {
-          print(index);
+          // print(index);
+          Navigator.pushNamed(context, 'chatContent',
+              arguments: {'index': index, 'name': '用户名${index}'});
         },
         child: Container(
           // color: Colors.white,

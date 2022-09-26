@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:imapp/utils/Reg.dart';
+import 'package:imapp/utils/reg.dart';
 
-import '../component/ShowValidCode.dart';
+import '../component/show_valid_code.dart';
 import '../http/api.dart';
 import '../model/registry_model.dart';
 import '../viewmodel/registry_viewmodel.dart';
