@@ -43,9 +43,11 @@ class _ChatListViewState extends State<ChatListView> {
       drawer: const LeftDrawer(),
       body: Container(
         padding: const EdgeInsets.only(top: 10),
-        child: ListView(
-          children: listViewContent,
-        ),
+        child: ListView.builder(
+            itemCount: listViewContent.length,
+            itemBuilder: (context, index) {
+              return listData(index);
+            }),
       ),
     );
   }
@@ -92,7 +94,7 @@ class _ChatListViewState extends State<ChatListView> {
                 ],
               ),
               Container(
-                color: Colors.red,
+                // color: Colors.red,
                 child: Text('日期123'),
               ),
             ],
@@ -143,6 +145,11 @@ class LeftDrawer extends StatelessWidget {
         children: [
           TextButton(
             onPressed: () {},
+            // 去除水波纹
+            style: ButtonStyle(
+                overlayColor: MaterialStateProperty.resolveWith((states) {
+              return Colors.transparent;
+            })),
             child: Container(
                 width: 70,
                 height: 70,
@@ -164,6 +171,7 @@ class LeftDrawer extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  Text('id:1234'),
                   Text(
                     '此人很懒，还没有设置个人简介...',
                     style: TextStyle(fontSize: 12),

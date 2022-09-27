@@ -7,6 +7,11 @@ class ImageButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
+      // 去除水波纹
+      style:
+          ButtonStyle(overlayColor: MaterialStateProperty.resolveWith((states) {
+        return Colors.transparent;
+      })),
       onPressed: () {
         // 点击后打开弹窗
         Scaffold.of(context).openDrawer();

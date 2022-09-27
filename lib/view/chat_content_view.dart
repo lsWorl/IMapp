@@ -1,8 +1,6 @@
-import 'package:chat_bubbles/bubbles/bubble_special_three.dart';
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:chat_bubbles/chat_bubbles.dart';
+import 'package:imapp/component/chat_input.dart';
 
 class ChatContentView extends StatefulWidget {
   ChatContentView({super.key, this.arguments});
@@ -13,6 +11,17 @@ class ChatContentView extends StatefulWidget {
 
 class _ChatContentViewState extends State<ChatContentView> {
   Map? params;
+  // 对话内容
+  List messageList = [
+    {
+      "msg": 'Hello world',
+      "isSender": false,
+    },
+    {
+      "msg": 'yeap',
+      "isSender": true,
+    },
+  ];
   @override
   void initState() {
     params = widget.arguments;
@@ -27,39 +36,41 @@ class _ChatContentViewState extends State<ChatContentView> {
         title: Text(params!['name']),
         centerTitle: true,
       ),
-      body: Padding(
-          padding: EdgeInsets.only(top: 20),
-          child: ListView(
-            children: const [
-              BubbleSpecialThree(
-                text: '消息内容',
-                color: Color(0xFF1B97F3),
-                // tail: false,
-                textStyle: TextStyle(color: Colors.white, fontSize: 16),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              BubbleSpecialThree(
-                text: 'Sure',
-                color: Color(0xFFE8E8EE),
-                // tail: false,
-                isSender: false,
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              BubbleSpecialThree(
-                text: 'Sure',
-                color: Color(0xFFE8E8EE),
-                // tail: false,
-                isSender: false,
-              ),
-              SizedBox(
-                height: 10,
-              ),
-            ],
+      body: Column(
+        // mainAxisSize: MainAxisSize.min,
+        // mainAxisAlignment: MainAxisAlignment.center,
+        // crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(height: 5),
+          Expanded(
+              child: ListView.builder(
+            // 数量
+            itemCount: messageList.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: BubbleNormal(
+                  text: messageList[index]['msg'],
+                  isSender: messageList[index]['isSender'],
+                  color: messageList[index]['isSender']
+                      ? const Color(0xFF1B97F3)
+                      : const Color(0xFFE8E8EE),
+                  tail: true,
+                ),
+              );
+            },
           )),
+          ChatInput(sendMessage: _sendMessage)
+        ],
+      ),
     );
+  }
+
+  _sendMessage(String value) {
+    if (value != '') {
+      setState(() {
+        messageList.add({'msg': value, 'isSender': true});
+      });
+    }
   }
 }
