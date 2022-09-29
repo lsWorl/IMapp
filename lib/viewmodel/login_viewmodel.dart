@@ -1,10 +1,11 @@
 import 'package:imapp/model/login_model.dart';
+import 'package:flutter/cupertino.dart';
 
 /**
    * 数据层
    * Data
    */
-class LoginViewModelData {
+class LoginViewModelData extends ChangeNotifier {
   // 账号
   String _account = '';
   // 密码
@@ -16,6 +17,8 @@ class LoginViewModelData {
 
   set account(var value) {
     _account = value;
+    // 更新后通知
+    notifyListeners();
   }
 
   String get account {
@@ -24,6 +27,8 @@ class LoginViewModelData {
 
   set pwd(var value) {
     _pwd = value;
+    // 更新后通知
+    notifyListeners();
   }
 
   String get pwd {
@@ -32,6 +37,8 @@ class LoginViewModelData {
 
   set validCode(var value) {
     _validCode = value;
+    // 更新后通知
+    notifyListeners();
   }
 
   String get validCode {
@@ -40,6 +47,8 @@ class LoginViewModelData {
 
   set isShowPwd(var value) {
     _isShowPwd = value;
+    // 更新后通知
+    notifyListeners();
   }
 
   bool get isShowPwd {

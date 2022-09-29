@@ -3,6 +3,7 @@ import 'package:imapp/view/indexChildren/chatList_view.dart';
 import 'package:imapp/view/indexChildren/contacts_view.dart';
 import 'package:imapp/view/indexChildren/discover_view.dart';
 import 'package:imapp/view/indexChildren/my_center_view.dart';
+import 'package:provider/provider.dart';
 
 import '../viewmodel/index_viewmodel.dart';
 // import 'indexChildren/contacts_view.dart';
@@ -16,7 +17,6 @@ class IndexView extends StatefulWidget {
 }
 
 class _IndexViewState extends State<IndexView> {
-  IndexViewModelData data = new IndexViewModelData();
   List<Widget> widgets = [
     ChatListView(),
     ContactsListView(),
@@ -27,7 +27,7 @@ class _IndexViewState extends State<IndexView> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: BottomBar(),
-      body: widgets[data.index],
+      body: widgets[Provider.of<IndexViewModelData>(context).index],
     );
   }
 
@@ -40,11 +40,9 @@ class _IndexViewState extends State<IndexView> {
         BottomNavigationBarItem(icon: Icon(Icons.camera), label: '发现'),
         BottomNavigationBarItem(icon: Icon(Icons.person), label: '我的'),
       ],
-      currentIndex: data.index,
+      currentIndex: Provider.of<IndexViewModelData>(context).index,
       onTap: (value) {
-        setState(() {
-          data.index = value;
-        });
+        Provider.of<IndexViewModelData>(context, listen: false).index = value;
       },
     );
   }

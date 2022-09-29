@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:imapp/viewmodel/contacts_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class ContactsListView extends StatelessWidget {
   const ContactsListView({super.key});
@@ -39,6 +40,45 @@ class ContactsListView extends StatelessWidget {
                 '好友',
                 style: TextStyle(color: Colors.grey, fontSize: 16),
               ),
+            ),
+            Consumer<ContactsViewModel>(
+              builder: (context, value, child) {
+                return Expanded(
+                    child: ListView.builder(
+                  itemCount: value.friendsList.length,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        print('点击${index}');
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        color: Colors.white,
+                        child: Row(
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 10),
+                              decoration: BoxDecoration(
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(10)),
+                                  image: DecorationImage(
+                                      image: NetworkImage(
+                                          value.friendsList[index]['img']))),
+                              height: 50,
+                              width: 50,
+                            ),
+                            Text(
+                              value.friendsList[index]['name'],
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ));
+              },
             )
           ],
         ),

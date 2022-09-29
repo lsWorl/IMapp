@@ -1,9 +1,11 @@
 // ignore: slash_for_doc_comments
+import 'package:flutter/cupertino.dart';
+
 /**
    * 数据层
    * Data
    */
-class RegistryViewModelData {
+class RegistryViewModelData extends ChangeNotifier {
   // 账号
   late String _account;
   // 密码
@@ -18,6 +20,8 @@ class RegistryViewModelData {
 
   set account(var value) {
     _account = value;
+    // 更新后通知
+    notifyListeners();
   }
 
   String get account {
@@ -26,6 +30,8 @@ class RegistryViewModelData {
 
   set pwd(var value) {
     _pwd = value;
+    // 更新后通知
+    notifyListeners();
   }
 
   String get pwd {
@@ -34,6 +40,8 @@ class RegistryViewModelData {
 
   set confirmPwd(var value) {
     _confirmPwd = value;
+    // 更新后通知
+    notifyListeners();
   }
 
   String get confirmPwd {
@@ -42,6 +50,8 @@ class RegistryViewModelData {
 
   set validCode(var value) {
     _validCode = value;
+    // 更新后通知
+    notifyListeners();
   }
 
   String get validCode {
@@ -50,6 +60,8 @@ class RegistryViewModelData {
 
   set isShowPwd(var value) {
     _isShowPwd = value;
+    // 更新后通知
+    notifyListeners();
   }
 
   bool get isShowPwd {
@@ -58,6 +70,8 @@ class RegistryViewModelData {
 
   set isShowConfirmPwd(var value) {
     _isShowConfirmPwd = value;
+    // 更新后通知
+    notifyListeners();
   }
 
   bool get isShowConfirmPwd {

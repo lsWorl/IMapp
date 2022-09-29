@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:imapp/routes/index.dart';
+import 'package:imapp/viewmodel/contacts_viewmodel.dart';
+import 'package:imapp/viewmodel/index_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (context) => ContactsViewModel()),
+    ChangeNotifierProvider(create: (context) => IndexViewModelData()),
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {

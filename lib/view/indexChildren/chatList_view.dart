@@ -1,6 +1,5 @@
-import 'package:flutter/rendering.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:imapp/viewmodel/contacts_viewmodel.dart';
+import 'package:provider/provider.dart';
 import '../../component/image_button.dart';
 import 'package:flutter/material.dart';
 
@@ -20,6 +19,7 @@ class _ChatListViewState extends State<ChatListView> {
     for (var i = 0; i < 15; i++) {
       listViewContent.add(listData(i));
     }
+
     super.initState();
   }
 
@@ -54,51 +54,52 @@ class _ChatListViewState extends State<ChatListView> {
 
   // 存放聊天列表
   Widget listData(int index) {
-    return Material(
-      color: Colors.white,
-      child: InkWell(
-        onTap: () {
-          // print(index);
-          Navigator.pushNamed(context, 'chatContent',
-              arguments: {'index': index, 'name': '用户名${index}'});
-        },
-        child: Container(
-          // color: Colors.white,
-          padding: const EdgeInsets.only(top: 10, bottom: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Card(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadiusDirectional.circular(10)),
-                    clipBehavior: Clip.antiAlias,
-                    child: Image.network(
-                      'https://www.keaidian.com/uploads/allimg/190424/24110307_20.jpg',
-                      width: 50,
-                      height: 50,
-                      fit: BoxFit.cover,
-                    ),
+    return InkWell(
+      onTap: () {
+        // Provider.of<ContactsViewModel>(context, listen: false).addFriend();
+
+        // print(Provider.of<ContactsViewModel>(context, listen: false)
+        //     .friendsList);
+
+        Navigator.pushNamed(context, 'chatContent',
+            arguments: {'index': index, 'name': '用户名${index}'});
+      },
+      child: Container(
+        // color: Colors.white,
+        padding: const EdgeInsets.only(top: 10, bottom: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Card(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadiusDirectional.circular(10)),
+                  clipBehavior: Clip.antiAlias,
+                  child: Image.network(
+                    'https://www.keaidian.com/uploads/allimg/190424/24110307_20.jpg',
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('data', style: TextStyle(fontSize: 22)),
-                        Text('data', style: TextStyle(fontSize: 16))
-                      ],
-                    ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text('data', style: TextStyle(fontSize: 22)),
+                      Text('data', style: TextStyle(fontSize: 16))
+                    ],
                   ),
-                ],
-              ),
-              Container(
-                // color: Colors.red,
-                child: Text('日期123'),
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+            Container(
+              // color: Colors.red,
+              child: const Text('11:28 PM'),
+            ),
+          ],
         ),
       ),
     );
