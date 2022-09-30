@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
           primaryColor: Colors.white),
       // routes: routes,
       // 默认路由
-      initialRoute: 'index',
+      initialRoute: 'login',
       // 路由守卫
       onGenerateRoute: onGenerateRoute,
     );

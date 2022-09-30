@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:imapp/utils/socket.dart';
 import 'package:imapp/view/indexChildren/chatList_view.dart';
 import 'package:imapp/view/indexChildren/contacts_view.dart';
 import 'package:imapp/view/indexChildren/discover_view.dart';
@@ -6,7 +7,6 @@ import 'package:imapp/view/indexChildren/my_center_view.dart';
 import 'package:provider/provider.dart';
 
 import '../viewmodel/index_viewmodel.dart';
-// import 'indexChildren/contacts_view.dart';
 
 // 首页入口
 class IndexView extends StatefulWidget {
@@ -23,6 +23,14 @@ class _IndexViewState extends State<IndexView> {
     DiscoverView(),
     MyCenterView()
   ];
+
+  @override
+  void initState() {
+    // 连接socket
+    ClientSocket().Connect(context);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
