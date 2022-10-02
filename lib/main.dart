@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:imapp/routes/index.dart';
+import 'package:imapp/socket/socket_provider.dart';
 import 'package:imapp/viewmodel/contacts_viewmodel.dart';
 import 'package:imapp/viewmodel/index_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +9,7 @@ void main() {
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => ContactsViewModel()),
     ChangeNotifierProvider(create: (context) => IndexViewModelData()),
+    ChangeNotifierProvider(create: (context) => SocketProvider()),
   ], child: const MyApp()));
 }
 
@@ -33,7 +35,7 @@ class MyApp extends StatelessWidget {
           primaryColor: Colors.white),
       // routes: routes,
       // 默认路由
-      initialRoute: 'login',
+      initialRoute: 'index',
       // 路由守卫
       onGenerateRoute: onGenerateRoute,
     );

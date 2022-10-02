@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class SocketProvider with ChangeNotifier {
-  late Socket socket;
+  late IO.Socket socket;
   // 网络状态
   String netWorkState = 'none';
   List records = [];

@@ -1,3 +1,4 @@
+import 'package:imapp/utils/socket.dart';
 import 'package:imapp/viewmodel/contacts_viewmodel.dart';
 import 'package:provider/provider.dart';
 import '../../component/image_button.dart';
@@ -13,7 +14,7 @@ class ChatListView extends StatefulWidget {
 class _ChatListViewState extends State<ChatListView> {
   // 存放列表
   List<Widget> listViewContent = [];
-
+  ClientSocket clientSocket = new ClientSocket();
   @override
   void initState() {
     for (var i = 0; i < 15; i++) {
@@ -60,9 +61,12 @@ class _ChatListViewState extends State<ChatListView> {
 
         // print(Provider.of<ContactsViewModel>(context, listen: false)
         //     .friendsList);
+        late Map data;
 
-        Navigator.pushNamed(context, 'chatContent',
-            arguments: {'index': index, 'name': '用户名${index}'});
+        data = clientSocket.sendMsg(context, {'name': '名字', 'id': 1});
+        print(data);
+        // Navigator.pushNamed(context, 'chatContent',
+        //     arguments: {'index': index, 'name': '用户名${index}'});
       },
       child: Container(
         // color: Colors.white,

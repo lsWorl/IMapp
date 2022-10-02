@@ -27,7 +27,7 @@ class _IndexViewState extends State<IndexView> {
   @override
   void initState() {
     // 连接socket
-    ClientSocket().Connect(context);
+    ClientSocket().connect(context);
     super.initState();
   }
 
