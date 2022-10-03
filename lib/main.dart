@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:imapp/provider_info/user_provider.dart';
 import 'package:imapp/routes/index.dart';
-import 'package:imapp/socket/socket_provider.dart';
+import 'package:imapp/provider_info/socket_provider.dart';
 import 'package:imapp/viewmodel/contacts_viewmodel.dart';
 import 'package:imapp/viewmodel/index_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +11,7 @@ void main() {
     ChangeNotifierProvider(create: (context) => ContactsViewModel()),
     ChangeNotifierProvider(create: (context) => IndexViewModelData()),
     ChangeNotifierProvider(create: (context) => SocketProvider()),
+    ChangeNotifierProvider(create: (context) => UserProvider()),
   ], child: const MyApp()));
 }
 
@@ -35,7 +37,7 @@ class MyApp extends StatelessWidget {
           primaryColor: Colors.white),
       // routes: routes,
       // 默认路由
-      initialRoute: 'index',
+      initialRoute: 'login',
       // 路由守卫
       onGenerateRoute: onGenerateRoute,
     );

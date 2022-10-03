@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
 import 'package:imapp/component/chat_input.dart';
+import 'package:imapp/provider_info/socket_provider.dart';
+import 'package:imapp/provider_info/user_provider.dart';
+import 'package:imapp/utils/socket.dart';
+import 'package:provider/provider.dart';
 
 class ChatContentView extends StatefulWidget {
   ChatContentView({super.key, this.arguments});
@@ -11,6 +15,7 @@ class ChatContentView extends StatefulWidget {
 
 class _ChatContentViewState extends State<ChatContentView> {
   Map? params;
+  ClientSocket clientSocket = new ClientSocket();
   // 对话内容
   List messageList = [
     {
@@ -37,9 +42,6 @@ class _ChatContentViewState extends State<ChatContentView> {
         centerTitle: true,
       ),
       body: Column(
-        // mainAxisSize: MainAxisSize.min,
-        // mainAxisAlignment: MainAxisAlignment.center,
-        // crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(height: 5),
           Expanded(
@@ -68,6 +70,27 @@ class _ChatContentViewState extends State<ChatContentView> {
 
   _sendMessage(String value) {
     if (value != '') {
+      String id = Provider.of<UserProvider>(context, listen: false)
+          .userInfo['id']
+          .toString();
+      clientSocket.sendPrivateMsg(
+          context, {'name': '名字', 'sendId': id, 'to': '2', 'content': value});
+
+      Provider.of<SocketProvider>(context, listen: false)
+          .socket
+          .on('private message', (data) {
+        print('私发接收到的data消息：${data}');
+        setState(() {
+          messageList.add({
+            'msg': data['content'],
+            'isSender': data['from'] ==
+                    Provider.of<SocketProvider>(context, listen: false).socketId
+                ? true
+                : false
+          });
+        });
+      });
+
       setState(() {
         messageList.add({'msg': value, 'isSender': true});
       });

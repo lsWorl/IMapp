@@ -1,4 +1,5 @@
-import 'package:imapp/utils/socket.dart';
+import 'dart:convert';
+
 import 'package:imapp/viewmodel/contacts_viewmodel.dart';
 import 'package:provider/provider.dart';
 import '../../component/image_button.dart';
@@ -14,11 +15,18 @@ class ChatListView extends StatefulWidget {
 class _ChatListViewState extends State<ChatListView> {
   // 存放列表
   List<Widget> listViewContent = [];
-  ClientSocket clientSocket = new ClientSocket();
+
   @override
   void initState() {
-    for (var i = 0; i < 15; i++) {
-      listViewContent.add(listData(i));
+    for (var i = 0;
+        i <
+            Provider.of<ContactsViewModel>(context, listen: false)
+                .friendsList
+                .length;
+        i++) {
+      listViewContent.add(listData(
+          Provider.of<ContactsViewModel>(context, listen: false)
+              .friendsList[i]));
     }
 
     super.initState();
@@ -47,26 +55,18 @@ class _ChatListViewState extends State<ChatListView> {
         child: ListView.builder(
             itemCount: listViewContent.length,
             itemBuilder: (context, index) {
-              return listData(index);
+              return listViewContent[index];
             }),
       ),
     );
   }
 
   // 存放聊天列表
-  Widget listData(int index) {
+  Widget listData(var data) {
     return InkWell(
       onTap: () {
-        // Provider.of<ContactsViewModel>(context, listen: false).addFriend();
-
-        // print(Provider.of<ContactsViewModel>(context, listen: false)
-        //     .friendsList);
-        late Map data;
-
-        data = clientSocket.sendMsg(context, {'name': '名字', 'id': 1});
-        print(data);
-        // Navigator.pushNamed(context, 'chatContent',
-        //     arguments: {'index': index, 'name': '用户名${index}'});
+        Navigator.pushNamed(context, 'chatContent',
+            arguments: {'id': data['id'], 'name': data['name']});
       },
       child: Container(
         // color: Colors.white,
@@ -81,7 +81,7 @@ class _ChatListViewState extends State<ChatListView> {
                       borderRadius: BorderRadiusDirectional.circular(10)),
                   clipBehavior: Clip.antiAlias,
                   child: Image.network(
-                    'https://www.keaidian.com/uploads/allimg/190424/24110307_20.jpg',
+                    data['img'],
                     width: 50,
                     height: 50,
                     fit: BoxFit.cover,
@@ -91,9 +91,9 @@ class _ChatListViewState extends State<ChatListView> {
                   padding: const EdgeInsets.only(left: 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text('data', style: TextStyle(fontSize: 22)),
-                      Text('data', style: TextStyle(fontSize: 16))
+                    children: [
+                      Text(data['name'], style: TextStyle(fontSize: 22)),
+                      Text(data['id'], style: TextStyle(fontSize: 16))
                     ],
                   ),
                 ),

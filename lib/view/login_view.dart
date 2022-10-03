@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:imapp/component/show_valid_code.dart';
 import 'package:imapp/http/api.dart';
 import 'package:imapp/model/login_model.dart';
+import 'package:imapp/provider_info/user_provider.dart';
+import 'package:provider/provider.dart';
 
 import '../utils/reg.dart';
 import '../viewmodel/login_viewmodel.dart';
@@ -239,6 +241,8 @@ class _accountInputState extends State<accountInput> {
                           });
                           print(result);
                           if (result['ok'] == 1) {
+                            Provider.of<UserProvider>(context, listen: false)
+                                .userInfo = result['data'];
                             // 跳转后并销毁路由
                             Navigator.of(context).pushNamedAndRemoveUntil(
                                 'index', (router) => router == null);
