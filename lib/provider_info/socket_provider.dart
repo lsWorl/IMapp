@@ -7,21 +7,10 @@ class SocketProvider with ChangeNotifier {
   // 网络状态
   String netWorkState = 'none';
   List records = [];
-  // socketId
-  late String _socketId;
   // 储存socket实例
   setSocket(value) {
     this.socket = value;
     notifyListeners();
-  }
-
-  // 设置id
-  set socketId(value) {
-    _socketId = value;
-  }
-
-  get socketId {
-    return _socketId;
   }
 
   // 清除消息

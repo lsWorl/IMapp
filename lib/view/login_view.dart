@@ -250,6 +250,8 @@ class _accountInputState extends State<accountInput> {
                             showAlertMsg(context, '验证码错误');
                           } else if (result['ok'] == 3) {
                             showAlertMsg(context, '账号或密码错误！');
+                          } else if (result['ok'] == 4) {
+                            showAlertMsg(context, '用户已经登录！');
                           } else {
                             showAlertMsg(context, '服务器繁忙中，请稍后再试...');
                           }

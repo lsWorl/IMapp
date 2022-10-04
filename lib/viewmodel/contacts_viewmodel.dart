@@ -20,6 +20,10 @@ class ContactsViewModel extends ChangeNotifier {
       "id": "2"
     }
   ];
+
+  // 与好友聊天信息
+  List _friendsContactContent = [];
+
   // 添加好友
   void addFriend() {
     _friendsList.add({
@@ -34,9 +38,20 @@ class ContactsViewModel extends ChangeNotifier {
 
   set friendsList(var value) {
     _friendsList = value;
+    // 更新后通知
+    notifyListeners();
   }
 
   List get friendsList {
     return _friendsList;
+  }
+
+  void addMsg(String content, bool isSelf) {
+    _friendsContactContent.add({'msg': content, 'isSender': isSelf});
+    notifyListeners();
+  }
+
+  List get friendsContactContent {
+    return _friendsContactContent;
   }
 }
