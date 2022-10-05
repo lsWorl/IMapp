@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:badges/badges.dart';
 import 'package:imapp/viewmodel/contacts_viewmodel.dart';
 import 'package:provider/provider.dart';
 import '../../component/image_button.dart';
@@ -24,9 +25,7 @@ class _ChatListViewState extends State<ChatListView> {
                 .friendsList
                 .length;
         i++) {
-      listViewContent.add(listData(
-          Provider.of<ContactsViewModel>(context, listen: false)
-              .friendsList[i]));
+      listViewContent.add(listData(i));
     }
 
     super.initState();
@@ -62,49 +61,71 @@ class _ChatListViewState extends State<ChatListView> {
   }
 
   // 存放聊天列表
-  Widget listData(var data) {
-    return InkWell(
-      onTap: () {
-        Navigator.pushNamed(context, 'chatContent',
-            arguments: {'id': data['id'], 'name': data['name']});
-      },
-      child: Container(
-        // color: Colors.white,
-        padding: const EdgeInsets.only(top: 10, bottom: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
+  Widget listData(int index) {
+    return Consumer<ContactsViewModel>(
+      builder: (context, value, child) {
+        return InkWell(
+          onTap: () {
+            Navigator.pushNamed(context, 'chatContent', arguments: {
+              'id': value.friendsList[index]['id'],
+              'name': value.friendsList[index]['name']
+            });
+          },
+          child: Container(
+            // color: Colors.white,
+            margin: const EdgeInsets.only(top: 10, bottom: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Card(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusDirectional.circular(10)),
-                  clipBehavior: Clip.antiAlias,
-                  child: Image.network(
-                    data['img'],
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
+                Row(
+                  children: [
+                    value.friendsList[index]['msgNum'] == 0
+                        ? avatar(value.friendsList[index]['img'])
+                        : Badge(
+                            badgeContent: Text(
+                              value.friendsList[index]['msgNum'].toString(),
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                            padding: const EdgeInsets.all(6.0),
+                            // position: BadgePosition(end: 0, top: 0),
+                            child: avatar(value.friendsList[index]['img']),
+                          ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(value.friendsList[index]['name'],
+                              style: TextStyle(fontSize: 22)),
+                          Text(value.friendsList[index]['lastMsg'],
+                              style: TextStyle(fontSize: 16))
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(data['name'], style: TextStyle(fontSize: 22)),
-                      Text(data['id'], style: TextStyle(fontSize: 16))
-                    ],
-                  ),
+                Container(
+                  // color: Colors.red,
+                  child: const Text('11:28 PM'),
                 ),
               ],
             ),
-            Container(
-              // color: Colors.red,
-              child: const Text('11:28 PM'),
-            ),
-          ],
-        ),
+          ),
+        );
+      },
+    );
+  }
+
+  Card avatar(String img) {
+    return Card(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadiusDirectional.circular(10)),
+      clipBehavior: Clip.antiAlias,
+      child: Image.network(
+        img,
+        width: 50,
+        height: 50,
+        fit: BoxFit.cover,
       ),
     );
   }

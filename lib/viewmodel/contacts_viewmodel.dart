@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:imapp/utils/public_storage.dart';
 
 /**
    * 数据层
@@ -11,13 +12,17 @@ class ContactsViewModel extends ChangeNotifier {
       "img":
           "https://pic2.zhimg.com/v2-d2aba0f0e32c3462d74bd1c801a81e79_r.jpg?source=1940ef5c",
       "name": "张三",
-      "id": "1"
+      "id": "1",
+      "lastMsg": "",
+      "msgNum": 0
     },
     {
       "img":
           "https://tse1-mm.cn.bing.net/th/id/OIP-C._xbmyprGLEovhHf79ojIawHaHa?pid=ImgDet&rs=1",
       "name": "李四",
-      "id": "2"
+      "id": "2",
+      "lastMsg": "",
+      "msgNum": 0
     }
   ];
 
@@ -46,9 +51,44 @@ class ContactsViewModel extends ChangeNotifier {
     return _friendsList;
   }
 
-  void addMsg(String content, bool isSelf) {
+  // 添加消息
+  void addMsg(String content, bool isSelf, String userId) {
+    PublicStorage publicStorage = new PublicStorage();
     _friendsContactContent.add({'msg': content, 'isSender': isSelf});
+    publicStorage.setHistoryList(userId, _friendsContactContent);
     notifyListeners();
+  }
+
+  // 用于显示用户最后发的信息
+  void addLastMsg(String content, String userId) {
+    _friendsList.forEach((element) {
+      if (element['id'] == userId) {
+        element['lastMsg'] = content;
+        element['msgNum']++;
+        notifyListeners();
+      }
+    });
+  }
+
+  // 获取本地消息后替换
+  void replaceMsgContent(List content) {
+    _friendsContactContent = content;
+    notifyListeners();
+  }
+
+  // 清空聊天信息
+  void cleanMsg() {
+    _friendsContactContent = [];
+    notifyListeners();
+  }
+
+  // 清空未读消息提示
+  void cleanUnRead(String userId) {
+    _friendsList.forEach((element) {
+      if (element['id'] == userId) {
+        element['msgNum'] = 0;
+      }
+    });
   }
 
   List get friendsContactContent {

@@ -24,11 +24,13 @@ class ClientSocket {
       'transports': ['websocket'],
     });
 
-    //
+    //监听私聊消息
     socket.on('private message', (data) {
       print('私发接收到的data消息：${data}');
       Provider.of<ContactsViewModel>(context, listen: false)
-          .addMsg(data['content'], false);
+          .addMsg(data['content'], false, data['to'].toString());
+      Provider.of<ContactsViewModel>(context, listen: false)
+          .addLastMsg(data['content'], data['to'].toString());
     });
 
     // 连接成功
