@@ -1,6 +1,5 @@
-import 'dart:convert';
-
 import 'package:badges/badges.dart';
+import 'package:imapp/provider_info/user_provider.dart';
 import 'package:imapp/viewmodel/contacts_viewmodel.dart';
 import 'package:provider/provider.dart';
 import '../../component/image_button.dart';
@@ -16,7 +15,6 @@ class ChatListView extends StatefulWidget {
 class _ChatListViewState extends State<ChatListView> {
   // 存放列表
   List<Widget> listViewContent = [];
-
   @override
   void initState() {
     for (var i = 0;
@@ -67,38 +65,38 @@ class _ChatListViewState extends State<ChatListView> {
         return InkWell(
           onTap: () {
             Navigator.pushNamed(context, 'chatContent', arguments: {
-              'id': value.friendsList[index]['id'],
-              'name': value.friendsList[index]['name']
+              'id': value.friendsList[index]['contact_id'],
+              'name': value.friendsList[index]['contact_name'],
+              'room_key': value.friendsList[index]['room_key']
             });
           },
           child: Container(
-            // color: Colors.white,
             margin: const EdgeInsets.only(top: 10, bottom: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
                   children: [
-                    value.friendsList[index]['msgNum'] == 0
-                        ? avatar(value.friendsList[index]['img'])
+                    value.friendsList[index]['msg_num'] == 0
+                        ? avatar(value.friendsList[index]['avatar'])
                         : Badge(
                             badgeContent: Text(
-                              value.friendsList[index]['msgNum'].toString(),
+                              value.friendsList[index]['msg_num'].toString(),
                               style: const TextStyle(color: Colors.white),
                             ),
                             padding: const EdgeInsets.all(6.0),
                             // position: BadgePosition(end: 0, top: 0),
-                            child: avatar(value.friendsList[index]['img']),
+                            child: avatar(value.friendsList[index]['avatar']),
                           ),
                     Padding(
                       padding: const EdgeInsets.only(left: 10),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(value.friendsList[index]['name'],
-                              style: TextStyle(fontSize: 22)),
-                          Text(value.friendsList[index]['lastMsg'],
-                              style: TextStyle(fontSize: 16))
+                          Text(value.friendsList[index]['contact_name'],
+                              style: const TextStyle(fontSize: 22)),
+                          Text(value.friendsList[index]['last_msg'],
+                              style: const TextStyle(fontSize: 16))
                         ],
                       ),
                     ),
@@ -140,7 +138,7 @@ class LeftDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          title(),
+          title(context),
           ListTile(
             leading: const Icon(Icons.account_circle),
             title: const Text('个人信息'),
@@ -162,7 +160,7 @@ class LeftDrawer extends StatelessWidget {
   }
 
   // 弹出层的头像展示
-  DrawerHeader title() {
+  DrawerHeader title(BuildContext context) {
     return DrawerHeader(
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -190,15 +188,17 @@ class LeftDrawer extends StatelessWidget {
               width: 180,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
-                    '名1112245字asd1112345',
-                    style: TextStyle(fontSize: 24),
+                    Provider.of<UserProvider>(context, listen: false)
+                        .userInfo['name'],
+                    style: const TextStyle(fontSize: 24),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  Text('id:1234'),
                   Text(
+                      'id:${Provider.of<UserProvider>(context, listen: false).userInfo['id']}'),
+                  const Text(
                     '此人很懒，还没有设置个人简介...',
                     style: TextStyle(fontSize: 12),
                     maxLines: 1,

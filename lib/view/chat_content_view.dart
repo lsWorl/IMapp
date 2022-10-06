@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
 import 'package:imapp/component/chat_input.dart';
@@ -9,11 +7,11 @@ import 'package:imapp/utils/public_storage.dart';
 import 'package:imapp/utils/socket.dart';
 import 'package:imapp/viewmodel/contacts_viewmodel.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatContentView extends StatefulWidget {
   ChatContentView({super.key, this.arguments});
   Map? arguments;
+
   @override
   State<ChatContentView> createState() => _ChatContentViewState();
 }
@@ -24,15 +22,18 @@ class _ChatContentViewState extends State<ChatContentView> {
   ClientSocket clientSocket = new ClientSocket();
 
   PublicStorage publicStorage = new PublicStorage();
-
+  // 获取provider的用户信息
+  late Map userInfo;
   @override
   void initState() {
     params = widget.arguments;
-    // 清除提示
+    userInfo = Provider.of<UserProvider>(context, listen: false).userInfo;
+
+    // 清除未读消息提示
     Provider.of<ContactsViewModel>(context, listen: false)
         .cleanUnRead(params!['id']);
 
-    publicStorage.getHistoryList(params!['id']).then((value) {
+    publicStorage.getHistoryList(params!['room_key']).then((value) {
       if (value != null) {
         Provider.of<ContactsViewModel>(context, listen: false)
             .replaceMsgContent(value);
@@ -43,7 +44,7 @@ class _ChatContentViewState extends State<ChatContentView> {
 
     Provider.of<SocketProvider>(context, listen: false)
         .socket
-        .emit('enter room', params!['id']);
+        .emit('enter room', params!['room_key']);
     super.initState();
   }
 
@@ -84,26 +85,28 @@ class _ChatContentViewState extends State<ChatContentView> {
   }
 
   _sendMessage(String value) async {
-    // 获取provider的用户信息
-    Map userInfo = Provider.of<UserProvider>(context, listen: false).userInfo;
     if (value != '') {
       // 发送消息给后端
       clientSocket.sendPrivateMsg(context, {
         'name': userInfo['name'],
-        'sendId': userInfo['id'].toString(),
+        'from': userInfo['id'],
         'to': params!['id'],
-        'content': value
+        'toSocketId':
+            Provider.of<SocketProvider>(context, listen: false).socket.id,
+        'content': value,
+        "room_key": params!['room_key']
       });
 
       Provider.of<ContactsViewModel>(context, listen: false)
-          .addMsg(value, true, widget.arguments!['id'].toString());
+          .addMsg(value, true, params!['room_key']);
     }
   }
 
   @override
   void deactivate() {
-    // 关闭聊天界面时将聊天数据存入本地
-
+    // 清除未读消息提示
+    Provider.of<ContactsViewModel>(context, listen: false)
+        .cleanUnRead(params!['id']);
     super.deactivate();
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:imapp/view/add_friend_view.dart';
 import 'package:imapp/view/chat_content_view.dart';
 import 'package:imapp/view/index_view.dart';
 import 'package:imapp/view/login_view.dart';
@@ -6,11 +7,13 @@ import 'package:imapp/view/registry_view.dart';
 
 // 路由
 Map<String, WidgetBuilder> routes = {
-  "/": (context) => LoginView(),
-  "login": (context) => LoginView(),
-  'registry': (context) => RegistryView(),
-  "index": (context) => IndexView(),
-  "chatContent": (context, {arguments}) => ChatContentView(arguments: arguments)
+  "/": (context) => const LoginView(),
+  "login": (context) => const LoginView(),
+  'registry': (context) => const RegistryView(),
+  "index": (context) => const IndexView(),
+  "chatContent": (context, {arguments}) =>
+      ChatContentView(arguments: arguments),
+  "addFriendView": (context) => const AddFriendView(),
 };
 
 // 配置传参

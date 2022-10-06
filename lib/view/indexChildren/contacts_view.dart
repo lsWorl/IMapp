@@ -7,7 +7,6 @@ class ContactsListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ContactsViewModel data = ContactsViewModel();
     return Scaffold(
       appBar: AppBar(
         title: const Text('联系人'),
@@ -27,8 +26,8 @@ class ContactsListView extends StatelessWidget {
             // 通用功能列表
             Column(
               children: [
-                commonList(Icons.people_alt_rounded, '添加新好友'),
-                commonList(Icons.chat_bubble, '加入群聊')
+                commonList(Icons.people_alt_rounded, '添加新好友', context),
+                commonList(Icons.chat_bubble, '加入群聊', context)
               ],
             ),
             Container(
@@ -43,41 +42,49 @@ class ContactsListView extends StatelessWidget {
             ),
             Consumer<ContactsViewModel>(
               builder: (context, value, child) {
-                return Expanded(
-                    child: ListView.builder(
-                  itemCount: value.friendsList.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        print('点击${index}');
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        color: Colors.white,
-                        child: Row(
-                          children: [
-                            Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 10),
-                              decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(10)),
-                                  image: DecorationImage(
-                                      image: NetworkImage(
-                                          value.friendsList[index]['img']))),
-                              height: 50,
-                              width: 50,
+                return value.friendsList.length == 0
+                    ? const Center(
+                        heightFactor: 2,
+                        child: Text('目前无好友，请去添加好友...',
+                            style: TextStyle(color: Colors.grey, fontSize: 16)),
+                      )
+                    : Expanded(
+                        child: ListView.builder(
+                        itemCount: value.friendsList.length,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () {
+                              print(
+                                  "点击${value.friendsList[index]['contact_id']}");
+                            },
+                            child: Container(
+                              width: double.infinity,
+                              color: Colors.white,
+                              child: Row(
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 10),
+                                    decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(10)),
+                                        image: DecorationImage(
+                                            image: NetworkImage(
+                                                value.friendsList[index]
+                                                    ['avatar']))),
+                                    height: 50,
+                                    width: 50,
+                                  ),
+                                  Text(
+                                    value.friendsList[index]['contact_name'],
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                ],
+                              ),
                             ),
-                            Text(
-                              value.friendsList[index]['name'],
-                              style: TextStyle(fontSize: 18),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ));
+                          );
+                        },
+                      ));
               },
             )
           ],
@@ -86,10 +93,10 @@ class ContactsListView extends StatelessWidget {
     );
   }
 
-  GestureDetector commonList(IconData icon, String text) {
+  GestureDetector commonList(IconData icon, String text, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        print('点击');
+        Navigator.of(context).pushNamed('addFriendView');
       },
       child: Container(
         width: double.infinity,

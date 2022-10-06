@@ -18,10 +18,10 @@ class IndexView extends StatefulWidget {
 
 class _IndexViewState extends State<IndexView> {
   List<Widget> widgets = [
-    ChatListView(),
-    ContactsListView(),
-    DiscoverView(),
-    MyCenterView()
+    const ChatListView(),
+    const ContactsListView(),
+    const DiscoverView(),
+    const MyCenterView()
   ];
 
   @override
@@ -29,6 +29,11 @@ class _IndexViewState extends State<IndexView> {
     // 连接socket
     ClientSocket().connect(context);
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
   }
 
   @override

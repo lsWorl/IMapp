@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:imapp/component/show_valid_code.dart';
 import 'package:imapp/http/api.dart';
+import 'package:imapp/model/contacts_model.dart';
 import 'package:imapp/model/login_model.dart';
 import 'package:imapp/provider_info/user_provider.dart';
+import 'package:imapp/viewmodel/contacts_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 import '../utils/reg.dart';
@@ -25,20 +27,15 @@ class _LoginViewState extends State<LoginView> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
-        children: [
-          const logoWidget(),
-          const loginText(),
-          const subTitle(),
-          const accountInput()
-        ],
+        children: const [LogoWidget(), LoginText(), SubTitle(), AccountInput()],
       ),
     );
   }
 }
 
 // logo
-class logoWidget extends StatelessWidget {
-  const logoWidget({super.key});
+class LogoWidget extends StatelessWidget {
+  const LogoWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -56,8 +53,8 @@ class logoWidget extends StatelessWidget {
 }
 
 // title
-class loginText extends StatelessWidget {
-  const loginText({super.key});
+class LoginText extends StatelessWidget {
+  const LoginText({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -75,8 +72,8 @@ class loginText extends StatelessWidget {
 }
 
 // subtitle
-class subTitle extends StatelessWidget {
-  const subTitle({super.key});
+class SubTitle extends StatelessWidget {
+  const SubTitle({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -94,14 +91,14 @@ class subTitle extends StatelessWidget {
 }
 
 // input 输入框
-class accountInput extends StatefulWidget {
-  const accountInput({super.key});
+class AccountInput extends StatefulWidget {
+  const AccountInput({super.key});
 
   @override
-  State<accountInput> createState() => _accountInputState();
+  State<AccountInput> createState() => _AccountInputState();
 }
 
-class _accountInputState extends State<accountInput> {
+class _AccountInputState extends State<AccountInput> {
   LoginViewModelData data = new LoginViewModelData();
   LoginModel sendData = new LoginModel();
   // 公用api
@@ -139,7 +136,6 @@ class _accountInputState extends State<accountInput> {
                 onChanged: (value) {
                   setState(() {
                     data.account = value;
-                    print(data.account);
                   });
                 },
               ),
@@ -156,7 +152,7 @@ class _accountInputState extends State<accountInput> {
                   maxLength: 20,
                   obscureText: data.isShowPwd,
                   decoration: InputDecoration(
-                      border: OutlineInputBorder(),
+                      border: const OutlineInputBorder(),
                       labelText: '请输入密码',
                       suffixIcon: IconButton(
                         onPressed: () {
@@ -172,7 +168,6 @@ class _accountInputState extends State<accountInput> {
                   onChanged: (value) {
                     setState(() {
                       data.pwd = value;
-                      print(data.pwd);
                     });
                   },
                 ),
@@ -199,7 +194,6 @@ class _accountInputState extends State<accountInput> {
                             border: OutlineInputBorder(), labelText: '请输入验证码'),
                         onChanged: (value) {
                           data.validCode = value;
-                          print(data.validCode);
                         },
                       ),
                     ),
@@ -230,33 +224,7 @@ class _accountInputState extends State<accountInput> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     OutlinedButton(
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          late Map<String, dynamic> result;
-                          await sendData
-                              .sendUserInfo(
-                                  data.account, data.pwd, data.validCode)
-                              .then((value) {
-                            result = json.decode(value.toString());
-                          });
-                          print(result);
-                          if (result['ok'] == 1) {
-                            Provider.of<UserProvider>(context, listen: false)
-                                .userInfo = result['data'];
-                            // 跳转后并销毁路由
-                            Navigator.of(context).pushNamedAndRemoveUntil(
-                                'index', (router) => router == null);
-                          } else if (result['ok'] == 2) {
-                            showAlertMsg(context, '验证码错误');
-                          } else if (result['ok'] == 3) {
-                            showAlertMsg(context, '账号或密码错误！');
-                          } else if (result['ok'] == 4) {
-                            showAlertMsg(context, '用户已经登录！');
-                          } else {
-                            showAlertMsg(context, '服务器繁忙中，请稍后再试...');
-                          }
-                        }
-                      },
+                      onPressed: _loginPressed,
                       style: ButtonStyle(
                           minimumSize:
                               MaterialStateProperty.all(const Size(100, 50))),
@@ -277,5 +245,58 @@ class _accountInputState extends State<accountInput> {
             ],
           ),
         ));
+  }
+
+  _loginPressed() async {
+    if (_formKey.currentState!.validate()) {
+      late Map<String, dynamic> result;
+      await sendData
+          .sendUserInfo(data.account, data.pwd, data.validCode)
+          .then((value) {
+        result = json.decode(value.toString());
+      });
+      print(result);
+      if (result['ok'] == 1) {
+        if (!mounted) return;
+        // 设置用户信息
+        Provider.of<UserProvider>(context, listen: false).userInfo =
+            result['data'];
+
+        // 设置用户联系人信息
+        ContactsModel contactsModel = new ContactsModel();
+        late Map<String, dynamic> contactsResult;
+        // 获取联系人
+
+        await contactsModel
+            .getContactsInfo(Provider.of<UserProvider>(context, listen: false)
+                .userInfo['id'])
+            .then((value) {
+          print('------------联系人数据----------');
+          contactsResult = json.decode(value.toString());
+          if (contactsResult['ok'] == 1) {
+            print(contactsResult['data']);
+            Provider.of<ContactsViewModel>(context, listen: false)
+                .setfriendsList(contactsResult['data']);
+          }
+        });
+
+        // 跳转后并销毁路由
+        if (!mounted) return;
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('index', (router) => false);
+      } else if (result['ok'] == 2) {
+        if (!mounted) return;
+        showAlertMsg(context, '验证码错误');
+      } else if (result['ok'] == 3) {
+        if (!mounted) return;
+        showAlertMsg(context, '账号或密码错误！');
+      } else if (result['ok'] == 4) {
+        if (!mounted) return;
+        showAlertMsg(context, '用户已经登录！');
+      } else {
+        if (!mounted) return;
+        showAlertMsg(context, '服务器繁忙中，请稍后再试...');
+      }
+    }
   }
 }

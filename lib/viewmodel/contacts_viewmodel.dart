@@ -9,20 +9,20 @@ class ContactsViewModel extends ChangeNotifier {
   // 好友列表
   List _friendsList = [
     {
-      "img":
+      "avatar":
           "https://pic2.zhimg.com/v2-d2aba0f0e32c3462d74bd1c801a81e79_r.jpg?source=1940ef5c",
-      "name": "张三",
-      "id": "1",
-      "lastMsg": "",
-      "msgNum": 0
+      "contact_name": "张三",
+      "contact_id": "1",
+      "last_nsg": "",
+      "msg_num": 0
     },
     {
-      "img":
+      "avatar":
           "https://tse1-mm.cn.bing.net/th/id/OIP-C._xbmyprGLEovhHf79ojIawHaHa?pid=ImgDet&rs=1",
-      "name": "李四",
-      "id": "2",
-      "lastMsg": "",
-      "msgNum": 0
+      "contact_name": "李四",
+      "contact_id": "2",
+      "last_nsg": "",
+      "msg_num": 0
     }
   ];
 
@@ -41,7 +41,7 @@ class ContactsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  set friendsList(var value) {
+  void setfriendsList(List value) {
     _friendsList = value;
     // 更新后通知
     notifyListeners();
@@ -52,22 +52,23 @@ class ContactsViewModel extends ChangeNotifier {
   }
 
   // 添加消息
-  void addMsg(String content, bool isSelf, String userId) {
+  void addMsg(String content, bool isSelf, String roomKey) {
+    // 通过房间来实现存储到一个相同位置
     PublicStorage publicStorage = new PublicStorage();
     _friendsContactContent.add({'msg': content, 'isSender': isSelf});
-    publicStorage.setHistoryList(userId, _friendsContactContent);
+    publicStorage.setHistoryList(roomKey, _friendsContactContent);
     notifyListeners();
   }
 
   // 用于显示用户最后发的信息
-  void addLastMsg(String content, String userId) {
-    _friendsList.forEach((element) {
-      if (element['id'] == userId) {
-        element['lastMsg'] = content;
-        element['msgNum']++;
+  void addLastMsg(String content, String roomKey) {
+    for (var element in _friendsList) {
+      if (element['room_key'] == roomKey) {
+        element['last_msg'] = content;
+        element['msg_num']++;
         notifyListeners();
       }
-    });
+    }
   }
 
   // 获取本地消息后替换
@@ -83,12 +84,12 @@ class ContactsViewModel extends ChangeNotifier {
   }
 
   // 清空未读消息提示
-  void cleanUnRead(String userId) {
-    _friendsList.forEach((element) {
-      if (element['id'] == userId) {
-        element['msgNum'] = 0;
+  void cleanUnRead(int userId) {
+    for (var element in _friendsList) {
+      if (element['contact_id'] == userId) {
+        element['msg_num'] = 0;
       }
-    });
+    }
   }
 
   List get friendsContactContent {
