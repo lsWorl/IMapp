@@ -26,6 +26,9 @@ class ContactsViewModel extends ChangeNotifier {
     }
   ];
 
+  //判断是否在聊天界面
+  bool _isContact = false;
+
   // 与好友聊天信息
   List _friendsContactContent = [];
 
@@ -65,6 +68,8 @@ class ContactsViewModel extends ChangeNotifier {
     for (var element in _friendsList) {
       if (element['room_key'] == roomKey) {
         element['last_msg'] = content;
+        // 如果正在聊天则不会显示未读消息
+        if (_isContact) return;
         element['msg_num']++;
         notifyListeners();
       }
@@ -86,10 +91,15 @@ class ContactsViewModel extends ChangeNotifier {
   // 清空未读消息提示
   void cleanUnRead(int userId) {
     for (var element in _friendsList) {
-      if (element['contact_id'] == userId) {
+      if (element['contact_id'] == userId && element['msg_num'] != 0) {
         element['msg_num'] = 0;
       }
     }
+  }
+
+  // 改变聊天状态
+  void changeContactState(bool isContact) {
+    _isContact = isContact;
   }
 
   List get friendsContactContent {

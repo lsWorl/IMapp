@@ -2,8 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:imapp/utils/reg.dart';
 
 import '../component/show_valid_code.dart';
@@ -33,8 +31,9 @@ class _RegistryViewState extends State<RegistryView> {
           },
         ),
       ),
-      body: Column(
-        children: [registryWidget(), registryText(), accountInput()],
+      body: SingleChildScrollView(
+        child: Column(
+            children: [registryWidget(), registryText(), accountInput()]),
       ),
     );
   }
@@ -210,44 +209,42 @@ class _accountInputState extends State<accountInput> {
                   direction: Axis.horizontal,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.only(right: 20),
-                      width: 230,
-                      child: TextFormField(
-                        // 验证
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return '输入内容不能为空！';
-                          }
-                        },
-                        maxLength: 6,
-                        style: const TextStyle(fontSize: 20),
-                        decoration: const InputDecoration(
-                            border: OutlineInputBorder(), labelText: '请输入验证码'),
-                        onChanged: (value) {
-                          data.validCode = value;
-                          print(data.validCode);
-                        },
-                      ),
-                    ),
-                    ElevatedButton(
-                        onPressed: () {
-                          api.GetValidCode().then((value) {
-                            Map<String, dynamic> responseData =
-                                json.decode(value.toString());
+                    Expanded(
+                        child: TextFormField(
+                      // 验证
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return '输入内容不能为空！';
+                        }
+                      },
+                      maxLength: 6,
+                      style: const TextStyle(fontSize: 20),
+                      decoration: const InputDecoration(
+                          border: OutlineInputBorder(), labelText: '请输入验证码'),
+                      onChanged: (value) {
+                        data.validCode = value;
+                      },
+                    )),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: ElevatedButton(
+                          onPressed: () {
+                            api.GetValidCode().then((value) {
+                              Map<String, dynamic> result =
+                                  json.decode(value.toString());
 
-                            if (responseData['ok'] == 1) {
-                              data.validCode =
-                                  responseData['data']['validCode'];
-                            }
-                            print(data.validCode);
-                            showAlertMsg(context, data.validCode);
-                          });
-                        },
-                        style: ButtonStyle(
-                            minimumSize:
-                                MaterialStateProperty.all(const Size(100, 60))),
-                        child: const Text('获取验证码'))
+                              if (result['ok'] == 1) {
+                                data.validCode = result['data']['validCode'];
+                              }
+                              print(data.validCode);
+                              showAlertMsg(context, data.validCode);
+                            });
+                          },
+                          style: ButtonStyle(
+                              minimumSize: MaterialStateProperty.all(
+                                  const Size(100, 60))),
+                          child: const Text('获取验证码')),
+                    )
                   ],
                 ),
               ),

@@ -26,9 +26,10 @@ class _LoginViewState extends State<LoginView> {
     // 视图层
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
+      body: SingleChildScrollView(
+          child: Column(
         children: const [LogoWidget(), LoginText(), SubTitle(), AccountInput()],
-      ),
+      )),
     );
   }
 }
@@ -105,6 +106,7 @@ class _AccountInputState extends State<AccountInput> {
   ReqApi api = new ReqApi();
   // 唯一标识
   final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -113,34 +115,39 @@ class _AccountInputState extends State<AccountInput> {
           padding: const EdgeInsets.only(left: 40, right: 40, top: 40),
           child: Column(
             children: [
-              TextFormField(
-                // 验证
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return '输入内容不能为空！';
-                  }
-                  if (!RegConfirm.isPhone(int.parse(value))) {
-                    return '输入必须为手机号！';
-                  }
-                },
-                style: const TextStyle(fontSize: 20),
-                maxLength: 11,
-                keyboardType: TextInputType.phone,
-                autofocus: true,
-                // 限制输入为数字
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp('[0-9]'))
+              Row(
+                children: [
+                  Expanded(
+                      child: TextFormField(
+                    // 验证
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return '输入内容不能为空！';
+                      }
+                      if (!RegConfirm.isPhone(int.parse(value))) {
+                        return '输入必须为手机号！';
+                      }
+                    },
+                    style: const TextStyle(fontSize: 20),
+                    maxLength: 11,
+                    keyboardType: TextInputType.phone,
+                    autofocus: true,
+                    // 限制输入为数字
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp('[0-9]'))
+                    ],
+                    decoration: const InputDecoration(
+                        border: OutlineInputBorder(), labelText: '请输入手机号'),
+                    onChanged: (value) {
+                      setState(() {
+                        data.account = value;
+                      });
+                    },
+                  ))
                 ],
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(), labelText: '请输入手机号'),
-                onChanged: (value) {
-                  setState(() {
-                    data.account = value;
-                  });
-                },
               ),
               Container(
-                padding: const EdgeInsets.only(top: 40),
+                padding: const EdgeInsets.only(top: 20),
                 child: TextFormField(
                   // 验证
                   validator: (value) {
@@ -173,52 +180,54 @@ class _AccountInputState extends State<AccountInput> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.only(top: 40),
+                padding: const EdgeInsets.only(top: 20),
                 child: Flex(
                   direction: Axis.horizontal,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.only(right: 20),
-                      width: 230,
-                      child: TextFormField(
-                        // 验证
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return '输入内容不能为空！';
-                          }
-                        },
-                        maxLength: 6,
-                        style: const TextStyle(fontSize: 20),
-                        decoration: const InputDecoration(
-                            border: OutlineInputBorder(), labelText: '请输入验证码'),
-                        onChanged: (value) {
-                          data.validCode = value;
-                        },
-                      ),
-                    ),
-                    ElevatedButton(
-                        onPressed: () {
-                          api.GetValidCode().then((value) {
-                            Map<String, dynamic> result =
-                                json.decode(value.toString());
+                    Expanded(
+                        child: TextFormField(
+                      // 验证
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return '输入内容不能为空！';
+                        }
+                      },
+                      maxLength: 6,
+                      style: const TextStyle(fontSize: 20),
+                      decoration: const InputDecoration(
+                          border: OutlineInputBorder(), labelText: '请输入验证码'),
+                      onChanged: (value) {
+                        data.validCode = value;
+                      },
+                    )),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: ElevatedButton(
+                          onPressed: () {
+                            api.GetValidCode().then((value) {
+                              Map<String, dynamic> result =
+                                  json.decode(value.toString());
 
-                            if (result['ok'] == 1) {
-                              data.validCode = result['data']['validCode'];
-                            }
-                            print(data.validCode);
-                            showAlertMsg(context, data.validCode);
-                          });
-                        },
-                        style: ButtonStyle(
-                            minimumSize:
-                                MaterialStateProperty.all(const Size(100, 60))),
-                        child: const Text('获取验证码'))
+                              if (result['ok'] == 1) {
+                                data.validCode = result['data']['validCode'];
+                              }
+                              print(data.validCode);
+                              showAlertMsg(context, data.validCode);
+                            });
+                          },
+                          style: ButtonStyle(
+                              minimumSize: MaterialStateProperty.all(
+                                  const Size(100, 60))),
+                          child: const Text('获取验证码')),
+                    )
                   ],
                 ),
               ),
               Container(
-                padding: const EdgeInsets.only(left: 80, right: 80, top: 40),
+                width: double.infinity,
+                margin: EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.only(top: 20),
                 child: Flex(
                   direction: Axis.horizontal,
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -238,7 +247,7 @@ class _AccountInputState extends State<AccountInput> {
                           minimumSize:
                               MaterialStateProperty.all(const Size(100, 50))),
                       child: const Text('注册'),
-                    ),
+                    )
                   ],
                 ),
               )
@@ -265,8 +274,8 @@ class _AccountInputState extends State<AccountInput> {
         // 设置用户联系人信息
         ContactsModel contactsModel = new ContactsModel();
         late Map<String, dynamic> contactsResult;
-        // 获取联系人
 
+        // 获取联系人
         await contactsModel
             .getContactsInfo(Provider.of<UserProvider>(context, listen: false)
                 .userInfo['id'])

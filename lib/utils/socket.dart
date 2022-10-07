@@ -15,7 +15,9 @@ class ClientSocket {
     print('当前网络状态：${netWorkStatus}');
 
     // 建立连接
-    socket = await IO.io('ws://169.254.226.185:3001', <String, dynamic>{
+    // 手机测试用ip 192.168.48.67
+    // 宽带测试用ip 169.254.226.185
+    socket = await IO.io('ws://192.168.48.67:3001', <String, dynamic>{
       'transports': ['websocket'],
     });
 
@@ -38,6 +40,13 @@ class ClientSocket {
         "userID": userInfo['id'],
         "userSocketId": socket.id,
         "userName": userInfo['name']
+      });
+
+      // 进入聊天房间
+      Provider.of<ContactsViewModel>(context, listen: false)
+          .friendsList
+          .forEach((element) {
+        socket.emit('enter room', element['room_key']);
       });
 
       // 将socket挂载到全局
