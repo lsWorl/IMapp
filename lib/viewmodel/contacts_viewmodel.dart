@@ -7,24 +7,7 @@ import 'package:imapp/utils/public_storage.dart';
    */
 class ContactsViewModel extends ChangeNotifier {
   // 好友列表
-  List _friendsList = [
-    {
-      "avatar":
-          "https://pic2.zhimg.com/v2-d2aba0f0e32c3462d74bd1c801a81e79_r.jpg?source=1940ef5c",
-      "contact_name": "张三",
-      "contact_id": "1",
-      "last_nsg": "",
-      "msg_num": 0
-    },
-    {
-      "avatar":
-          "https://tse1-mm.cn.bing.net/th/id/OIP-C._xbmyprGLEovhHf79ojIawHaHa?pid=ImgDet&rs=1",
-      "contact_name": "李四",
-      "contact_id": "2",
-      "last_nsg": "",
-      "msg_num": 0
-    }
-  ];
+  List _friendsList = [];
 
   //判断是否在聊天界面
   bool _isContact = false;

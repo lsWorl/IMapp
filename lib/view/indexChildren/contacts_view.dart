@@ -56,6 +56,11 @@ class ContactsListView extends StatelessWidget {
                             onTap: () {
                               print(
                                   "点击${value.friendsList[index]['contact_id']}");
+                              Navigator.of(context).pushNamed('friendInfoView',
+                                  arguments: {
+                                    "info": value.friendsList[index],
+                                    "isFriend": true
+                                  });
                             },
                             child: Container(
                               width: double.infinity,

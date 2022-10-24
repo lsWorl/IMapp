@@ -85,7 +85,6 @@ class _ChatListViewState extends State<ChatListView> {
                               style: const TextStyle(color: Colors.white),
                             ),
                             padding: const EdgeInsets.all(6.0),
-                            // position: BadgePosition(end: 0, top: 0),
                             child: avatar(value.friendsList[index]['avatar']),
                           ),
                     Padding(
@@ -198,8 +197,9 @@ class LeftDrawer extends StatelessWidget {
                   ),
                   Text(
                       'id:${Provider.of<UserProvider>(context, listen: false).userInfo['id']}'),
-                  const Text(
-                    '此人很懒，还没有设置个人简介...',
+                  Text(
+                    Provider.of<UserProvider>(context, listen: false)
+                        .userInfo['described'],
                     style: TextStyle(fontSize: 12),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

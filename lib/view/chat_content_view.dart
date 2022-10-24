@@ -9,8 +9,8 @@ import 'package:imapp/viewmodel/contacts_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 class ChatContentView extends StatefulWidget {
-  ChatContentView({super.key, this.arguments});
-  Map? arguments;
+  const ChatContentView({super.key, this.arguments});
+  final Map? arguments;
 
   @override
   State<ChatContentView> createState() => _ChatContentViewState();

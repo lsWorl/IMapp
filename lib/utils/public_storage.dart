@@ -28,6 +28,7 @@ class PublicStorage {
       // print('本地存储获取到的数据：${result}');
       return jsonDecode(result);
     } catch (e) {
+      print('没获取到本地的数据');
       print('报错:${e}');
     }
   }
