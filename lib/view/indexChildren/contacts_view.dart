@@ -42,7 +42,7 @@ class ContactsListView extends StatelessWidget {
             ),
             Consumer<ContactsViewModel>(
               builder: (context, value, child) {
-                return value.friendsList.length == 0
+                return value.friendsList.isEmpty
                     ? const Center(
                         heightFactor: 2,
                         child: Text('目前无好友，请去添加好友...',

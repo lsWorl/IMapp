@@ -161,6 +161,7 @@ class LeftDrawer extends StatelessWidget {
 
   // 弹出层的头像展示
   DrawerHeader title(BuildContext context) {
+    String avatar = Provider.of<UserProvider>(context).userInfo['avatar'];
     return DrawerHeader(
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -177,10 +178,9 @@ class LeftDrawer extends StatelessWidget {
             child: Container(
                 width: 70,
                 height: 70,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(80)),
-                  image: DecorationImage(
-                      image: AssetImage('assets/images/logo.png')),
+                  image: DecorationImage(image: NetworkImage(avatar)),
                 )),
           ),
           Container(

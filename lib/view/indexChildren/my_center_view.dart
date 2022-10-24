@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:imapp/provider_info/user_provider.dart';
+import 'package:provider/provider.dart';
 
 class MyCenterView extends StatelessWidget {
   const MyCenterView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    String avatar = Provider.of<UserProvider>(context).userInfo['avatar'];
     return Scaffold(
       body: Container(
         padding: EdgeInsets.only(top: 50),
@@ -15,10 +18,10 @@ class MyCenterView extends StatelessWidget {
                 Container(
                     height: 70,
                     width: 70,
-                    decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        image: DecorationImage(
-                            image: AssetImage('assets/images/logo.png')))),
+                    decoration: BoxDecoration(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                        image: DecorationImage(image: NetworkImage(avatar)))),
                 Column(
                   children: const [
                     Padding(
