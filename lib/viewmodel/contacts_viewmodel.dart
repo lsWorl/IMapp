@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
 import 'package:imapp/utils/public_storage.dart';
 
@@ -17,12 +19,12 @@ class ContactsViewModel extends ChangeNotifier {
 
   // 添加好友
   void addFriend() {
-    _friendsList.add({
-      "img":
-          "https://tse1-mm.cn.bing.net/th/id/OIP-C._xbmyprGLEovhHf79ojIawHaHa?pid=ImgDet&rs=1",
-      "name": "李四",
-      "id": _friendsList.length + 1
-    });
+    // _friendsList.add({
+    //   "img":
+    //       "https://tse1-mm.cn.bing.net/th/id/OIP-C._xbmyprGLEovhHf79ojIawHaHa?pid=ImgDet&rs=1",
+    //   "name": "李四",
+    //   "id": _friendsList.length + 1
+    // });
     // 更新后通知
     notifyListeners();
   }

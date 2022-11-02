@@ -17,7 +17,7 @@ class ClientSocket {
     // 建立连接
     // 手机测试用ip 192.168.48.67
     // 宽带测试用ip 169.254.226.185
-    socket = await IO.io('ws://192.168.63.67:3001', <String, dynamic>{
+    socket = await IO.io('ws://169.254.226.185:3001', <String, dynamic>{
       'transports': ['websocket'],
     });
 
@@ -55,7 +55,7 @@ class ClientSocket {
 
     // 断开连接
     socket.on('disconnect', (data) {
-      print('disconnect...');
+      print('socket断开连接');
     });
   }
 

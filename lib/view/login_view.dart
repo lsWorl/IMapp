@@ -283,7 +283,7 @@ class _AccountInputState extends State<AccountInput> {
           print('------------联系人数据----------');
           contactsResult = json.decode(value.toString());
           if (contactsResult['ok'] == 1) {
-            print(contactsResult['data']);
+            // print(contactsResult['data']);
             Provider.of<ContactsViewModel>(context, listen: false)
                 .setfriendsList(contactsResult['data']);
           }

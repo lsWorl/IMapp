@@ -12,7 +12,7 @@ class FriendInfoView extends StatefulWidget {
 class _FriendInfoViewState extends State<FriendInfoView> {
   // 获取到的参数
   Map? params;
-  Map? info;
+  late Map info;
   @override
   void initState() {
     params = widget.arguments;
@@ -41,7 +41,7 @@ class _FriendInfoViewState extends State<FriendInfoView> {
           width: double.infinity,
           decoration: BoxDecoration(
             image: DecorationImage(
-                image: NetworkImage(info!['avatar']), fit: BoxFit.cover),
+                image: NetworkImage(info['avatar']), fit: BoxFit.cover),
           ),
           child: ClipRRect(
             child: BackdropFilter(
@@ -60,16 +60,30 @@ class _FriendInfoViewState extends State<FriendInfoView> {
                               const BorderRadius.all(Radius.circular(10)),
                           border: Border.all(color: Colors.white, width: 4),
                           image: DecorationImage(
-                              image: NetworkImage(info!['avatar']))),
+                              image: NetworkImage(info['avatar']))),
                       height: 200,
                       width: 200,
                     ),
                   ),
                   Center(
                     child: Text(
-                      info!['contact_name'],
+                      info['name'],
                       style: const TextStyle(
-                          fontSize: 26, color: Color(0xFF272832)),
+                          fontSize: 30, color: Color(0xFF272832)),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Center(
+                    child: Container(
+                      width: 400,
+                      child: Text(
+                        info['described'],
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                            fontSize: 20, color: Color(0xFF272832)),
+                      ),
                     ),
                   ),
                   const Spacer(),
@@ -79,7 +93,7 @@ class _FriendInfoViewState extends State<FriendInfoView> {
                       onPressed: () {
                         Navigator.pushNamed(context, 'chatContent', arguments: {
                           'id': info!['contact_id'],
-                          'name': info!['contact_name'],
+                          'name': info!['name'],
                           'room_key': info!['room_key']
                         });
                       },

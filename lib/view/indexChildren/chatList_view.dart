@@ -62,53 +62,61 @@ class _ChatListViewState extends State<ChatListView> {
   Widget listData(int index) {
     return Consumer<ContactsViewModel>(
       builder: (context, value, child) {
-        return InkWell(
-          onTap: () {
-            Navigator.pushNamed(context, 'chatContent', arguments: {
-              'id': value.friendsList[index]['contact_id'],
-              'name': value.friendsList[index]['contact_name'],
-              'room_key': value.friendsList[index]['room_key']
-            });
-          },
-          child: Container(
-            margin: const EdgeInsets.only(top: 10, bottom: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    value.friendsList[index]['msg_num'] == 0
-                        ? avatar(value.friendsList[index]['avatar'])
-                        : Badge(
-                            badgeContent: Text(
-                              value.friendsList[index]['msg_num'].toString(),
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                            padding: const EdgeInsets.all(6.0),
-                            child: avatar(value.friendsList[index]['avatar']),
-                          ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+        print(value.friendsList[index]['is_out']);
+        // value.friendsList[index]['is_out'] == '1'说明互相为好友
+        return value.friendsList[index]['is_out'] == '1'
+            ? InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, 'chatContent', arguments: {
+                    'id': value.friendsList[index]['contact_id'],
+                    'name': value.friendsList[index]['name'],
+                    'room_key': value.friendsList[index]['room_key']
+                  });
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(top: 10, bottom: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
                         children: [
-                          Text(value.friendsList[index]['contact_name'],
-                              style: const TextStyle(fontSize: 22)),
-                          Text(value.friendsList[index]['last_msg'],
-                              style: const TextStyle(fontSize: 16))
+                          value.friendsList[index]['msg_num'] == 0
+                              ? avatar(value.friendsList[index]['avatar'])
+                              : Badge(
+                                  badgeContent: Text(
+                                    value.friendsList[index]['msg_num']
+                                        .toString(),
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                  padding: const EdgeInsets.all(6.0),
+                                  child: avatar(
+                                      value.friendsList[index]['avatar']),
+                                ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(value.friendsList[index]['name'],
+                                    style: const TextStyle(fontSize: 22)),
+                                Text(
+                                    value.friendsList[index]['last_msg']
+                                        .toString(),
+                                    style: const TextStyle(fontSize: 16))
+                              ],
+                            ),
+                          ),
                         ],
                       ),
-                    ),
-                  ],
+                      Container(
+                        // color: Colors.red,
+                        child: const Text('11:28 PM'),
+                      ),
+                    ],
+                  ),
                 ),
-                Container(
-                  // color: Colors.red,
-                  child: const Text('11:28 PM'),
-                ),
-              ],
-            ),
-          ),
-        );
+              )
+            : Container();
       },
     );
   }

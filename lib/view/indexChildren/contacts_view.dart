@@ -81,7 +81,7 @@ class ContactsListView extends StatelessWidget {
                                     width: 50,
                                   ),
                                   Text(
-                                    value.friendsList[index]['contact_name'],
+                                    value.friendsList[index]['name'],
                                     style: TextStyle(fontSize: 18),
                                   ),
                                 ],
