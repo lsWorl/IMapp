@@ -13,12 +13,16 @@ class _FriendInfoViewState extends State<FriendInfoView> {
   // 获取到的参数
   Map? params;
   late Map info;
+  // 按钮的文字
+  String buttonText = '发送消息';
   @override
   void initState() {
     params = widget.arguments;
     super.initState();
     print(params);
     info = params!['info'];
+    // 判断当前用户是否是好友
+    buttonText = info['is_out'] == '1' ? buttonText : '添加好友';
     print(info);
   }
 
@@ -92,9 +96,9 @@ class _FriendInfoViewState extends State<FriendInfoView> {
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.pushNamed(context, 'chatContent', arguments: {
-                          'id': info!['contact_id'],
-                          'name': info!['name'],
-                          'room_key': info!['room_key']
+                          'id': info['contact_id'],
+                          'name': info['name'],
+                          'room_key': info['room_key']
                         });
                       },
                       style: ButtonStyle(
@@ -102,9 +106,9 @@ class _FriendInfoViewState extends State<FriendInfoView> {
                             const EdgeInsets.symmetric(
                                 horizontal: 140.0, vertical: 12.0)),
                       ),
-                      child: const Text(
-                        '发送消息',
-                        style: TextStyle(
+                      child: Text(
+                        buttonText,
+                        style: const TextStyle(
                             fontSize: 20,
                             color: Color.fromARGB(255, 227, 227, 227)),
                       ),
