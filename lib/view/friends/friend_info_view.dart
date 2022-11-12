@@ -1,18 +1,19 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:imapp/convert/userContacts/user_contacts.dart';
 
 class FriendInfoView extends StatefulWidget {
   const FriendInfoView({super.key, this.arguments});
-  final Map? arguments;
+  final Map<String, dynamic>? arguments;
   @override
   State<FriendInfoView> createState() => _FriendInfoViewState();
 }
 
 class _FriendInfoViewState extends State<FriendInfoView> {
   // 获取到的参数
-  Map? params;
-  late Map info;
+  Map<String, dynamic>? params;
+  late UserContacts info;
   // 按钮的文字
   String buttonText = '发送消息';
   @override
@@ -20,10 +21,9 @@ class _FriendInfoViewState extends State<FriendInfoView> {
     params = widget.arguments;
     super.initState();
     print(params);
-    info = params!['info'];
+    info = UserContacts.fromJson(params!['info']);
     // 判断当前用户是否是好友
-    buttonText = info['is_out'] == '1' ? buttonText : '添加好友';
-    print(info);
+    buttonText = info.is_out == '1' ? buttonText : '添加好友';
   }
 
   @override
@@ -45,7 +45,7 @@ class _FriendInfoViewState extends State<FriendInfoView> {
           width: double.infinity,
           decoration: BoxDecoration(
             image: DecorationImage(
-                image: NetworkImage(info['avatar']), fit: BoxFit.cover),
+                image: NetworkImage(info.avatar), fit: BoxFit.cover),
           ),
           child: ClipRRect(
             child: BackdropFilter(
@@ -64,14 +64,14 @@ class _FriendInfoViewState extends State<FriendInfoView> {
                               const BorderRadius.all(Radius.circular(10)),
                           border: Border.all(color: Colors.white, width: 4),
                           image: DecorationImage(
-                              image: NetworkImage(info['avatar']))),
+                              image: NetworkImage(info.avatar))),
                       height: 200,
                       width: 200,
                     ),
                   ),
                   Center(
                     child: Text(
-                      info['name'],
+                      info.name,
                       style: const TextStyle(
                           fontSize: 30, color: Color(0xFF272832)),
                     ),
@@ -83,7 +83,7 @@ class _FriendInfoViewState extends State<FriendInfoView> {
                     child: Container(
                       width: 400,
                       child: Text(
-                        info['described'],
+                        info.described,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                             fontSize: 20, color: Color(0xFF272832)),
@@ -94,13 +94,7 @@ class _FriendInfoViewState extends State<FriendInfoView> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 100),
                     child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, 'chatContent', arguments: {
-                          'id': info['contact_id'],
-                          'name': info['name'],
-                          'room_key': info['room_key']
-                        });
-                      },
+                      onPressed: _pressed,
                       style: ButtonStyle(
                         padding: MaterialStateProperty.all(
                             const EdgeInsets.symmetric(
@@ -119,5 +113,20 @@ class _FriendInfoViewState extends State<FriendInfoView> {
             ),
           ),
         ));
+  }
+
+  _pressed() {
+    // 判断是否是好友
+    if (!params!['isFriend']) {
+      print('不是好友');
+      // 跳转到添加好友详细页面
+    } else {
+      // 是好友直接进入聊天页面
+      Navigator.pushNamed(context, 'chatContent', arguments: {
+        'id': info.contact_id,
+        'name': info.name,
+        'room_key': info.room_key
+      });
+    }
   }
 }

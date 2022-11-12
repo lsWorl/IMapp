@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:imapp/component/show_valid_code.dart';
-import 'package:imapp/convert/user.dart';
 import 'package:imapp/http/api.dart';
 import 'package:imapp/model/contacts_model.dart';
 import 'package:imapp/model/login_model.dart';
@@ -268,6 +267,7 @@ class _AccountInputState extends State<AccountInput> {
       print(result);
       if (result['ok'] == 1) {
         if (!mounted) return;
+
         // 设置用户信息
         Provider.of<UserProvider>(context, listen: false).userInfo =
             result['data'];
@@ -276,28 +276,17 @@ class _AccountInputState extends State<AccountInput> {
         ContactsModel contactsModel = new ContactsModel();
         late Map<String, dynamic> contactsResult;
         // 获取联系人
-        // await contactsModel
-        //     .getContactsInfo(Provider.of<UserProvider>(context, listen: false)
-        //         .userInfo['id'])
-        //     .then((value) {
-        //   print('------------联系人数据----------');
-        //   contactsResult = json.decode(value.toString());
-        //   if (contactsResult['ok'] == 1) {
-        //     print(contactsResult['data']);
-        //     Provider.of<ContactsViewModel>(context, listen: false)
-        //         .setfriendsList(contactsResult['data']);
-        //   }
-        // });
         await contactsModel
             .getContactsInfo(Provider.of<UserProvider>(context, listen: false)
                 .userInfo['id'])
             .then((value) {
-          contactsResult = jsonDecode(value.toString());
-          print(contactsResult['data'][0]);
-          var contactUser = User.fromJson(contactsResult['data'][0]);
           print('------------联系人数据----------');
-          print(contactUser);
-          print(contactUser.name);
+          contactsResult = json.decode(value.toString());
+          if (contactsResult['ok'] == 1) {
+            print(contactsResult['data']);
+            Provider.of<ContactsViewModel>(context, listen: false)
+                .setfriendsList(contactsResult['data']);
+          }
         });
         // 跳转后并销毁路由
         if (!mounted) return;

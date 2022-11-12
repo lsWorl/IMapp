@@ -60,32 +60,11 @@ class _AddFriendViewState extends State<AddFriendView> {
                         )),
                         IconButton(
                             onPressed: () async {
-                              int text = int.parse(_controller.text);
-                              // ignore: unnecessary_type_check
-                              if (text is! int) {
-                                Fluttertoast.showToast(
-                                    msg: "没有找到用户数据，请输入id或者手机号！",
-                                    toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.CENTER,
-                                    timeInSecForIosWeb: 1,
-                                    backgroundColor: Colors.red,
-                                    textColor: Colors.white,
-                                    fontSize: 16.0);
-                                setState(() {
-                                  _controller.text = '';
-                                  searchResult = {};
-                                });
-                                return;
-                              }
-                              await search.searchUser(text).then((value) {
-                                Map<String, dynamic> result =
-                                    json.decode(value.toString());
-                                print(result);
-                                if (result['code'] == 200) {
-                                  setState(() {
-                                    searchResult = result['data'][0];
-                                  });
-                                } else if (result['code'] == 406) {
+                              try {
+                                // 捕获异常，如果输入的不是数字将报错
+                                var text = int.parse(_controller.text);
+                                // ignore: unnecessary_type_check
+                                if (text is! int) {
                                   Fluttertoast.showToast(
                                       msg: "没有找到用户数据，请输入id或者手机号！",
                                       toastLength: Toast.LENGTH_SHORT,
@@ -100,7 +79,40 @@ class _AddFriendViewState extends State<AddFriendView> {
                                   });
                                   return;
                                 }
-                              });
+                                await search.searchUser(text).then((value) {
+                                  Map<String, dynamic> result =
+                                      json.decode(value.toString());
+                                  print(result);
+                                  if (result['code'] == 200) {
+                                    setState(() {
+                                      // 如果为200将用户显示出来
+                                      searchResult = result['data'][0];
+                                    });
+                                  } else if (result['code'] == 406) {
+                                    Fluttertoast.showToast(
+                                        msg: "没有找到用户数据，请输入id或者手机号！",
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.CENTER,
+                                        timeInSecForIosWeb: 1,
+                                        backgroundColor: Colors.red,
+                                        textColor: Colors.white,
+                                        fontSize: 16.0);
+                                    setState(() {
+                                      _controller.text = '';
+                                      searchResult = {};
+                                    });
+                                    return;
+                                  }
+                                });
+                              } catch (e) {
+                                // 输出错误信息
+                                Fluttertoast.showToast(
+                                    msg: '请输入数字信息！',
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    backgroundColor: Colors.red,
+                                    gravity: ToastGravity.CENTER);
+                                return;
+                              }
                             },
                             icon: Icon(Icons.search))
                       ],
@@ -114,7 +126,20 @@ class _AddFriendViewState extends State<AddFriendView> {
               ? Container()
               : GestureDetector(
                   onTap: () {
-                    print("点击");
+                    // 补全信息后跳转
+                    Navigator.of(context)
+                        .pushNamed('friendInfoView', arguments: {
+                      "info": {
+                        ...searchResult,
+                        "user_id": -1,
+                        "contact_id": -1,
+                        "last_msg": "",
+                        "msg_num": 0,
+                        "room_key": "",
+                        "is_out": "0"
+                      },
+                      "isFriend": false
+                    });
                   },
                   child: Container(
                     width: double.infinity,

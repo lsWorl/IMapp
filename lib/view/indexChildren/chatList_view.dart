@@ -1,4 +1,6 @@
 import 'package:badges/badges.dart';
+import 'package:imapp/convert/user/user.dart';
+import 'package:imapp/convert/userContacts/user_contacts.dart';
 import 'package:imapp/provider_info/user_provider.dart';
 import 'package:imapp/viewmodel/contacts_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -62,15 +64,16 @@ class _ChatListViewState extends State<ChatListView> {
   Widget listData(int index) {
     return Consumer<ContactsViewModel>(
       builder: (context, value, child) {
-        print(value.friendsList[index]['is_out']);
-        // value.friendsList[index]['is_out'] == '1'说明互相为好友
-        return value.friendsList[index]['is_out'] == '1'
+        // 序列化联系好友
+        var contactUser = UserContacts.fromJson(value.friendsList[index]);
+        // contactUser.is_out == '1'说明互相为好友
+        return contactUser.is_out == '1'
             ? InkWell(
                 onTap: () {
                   Navigator.pushNamed(context, 'chatContent', arguments: {
-                    'id': value.friendsList[index]['contact_id'],
-                    'name': value.friendsList[index]['name'],
-                    'room_key': value.friendsList[index]['room_key']
+                    'id': contactUser.contact_id,
+                    'name': contactUser.name,
+                    'room_key': contactUser.room_key
                   });
                 },
                 child: Container(
@@ -80,28 +83,24 @@ class _ChatListViewState extends State<ChatListView> {
                     children: [
                       Row(
                         children: [
-                          value.friendsList[index]['msg_num'] == 0
-                              ? avatar(value.friendsList[index]['avatar'])
+                          contactUser.msg_num == 0
+                              ? avatar(contactUser.avatar)
                               : Badge(
                                   badgeContent: Text(
-                                    value.friendsList[index]['msg_num']
-                                        .toString(),
+                                    contactUser.msg_num.toString(),
                                     style: const TextStyle(color: Colors.white),
                                   ),
                                   padding: const EdgeInsets.all(6.0),
-                                  child: avatar(
-                                      value.friendsList[index]['avatar']),
+                                  child: avatar(contactUser.avatar),
                                 ),
                           Padding(
                             padding: const EdgeInsets.only(left: 10),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(value.friendsList[index]['name'],
+                                Text(contactUser.name,
                                     style: const TextStyle(fontSize: 22)),
-                                Text(
-                                    value.friendsList[index]['last_msg']
-                                        .toString(),
+                                Text(contactUser.last_msg.toString(),
                                     style: const TextStyle(fontSize: 16))
                               ],
                             ),
@@ -168,7 +167,10 @@ class LeftDrawer extends StatelessWidget {
 
   // 弹出层的头像展示
   DrawerHeader title(BuildContext context) {
-    String avatar = Provider.of<UserProvider>(context).userInfo['avatar'];
+    // 序列化当前用户
+    var currentUser =
+        User.fromJson(Provider.of<UserProvider>(context).userInfo);
+    String avatar = currentUser.avatar;
     return DrawerHeader(
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -197,17 +199,14 @@ class LeftDrawer extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    Provider.of<UserProvider>(context, listen: false)
-                        .userInfo['name'],
+                    currentUser.name,
                     style: const TextStyle(fontSize: 24),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  Text('id:${currentUser.id}'),
                   Text(
-                      'id:${Provider.of<UserProvider>(context, listen: false).userInfo['id']}'),
-                  Text(
-                    Provider.of<UserProvider>(context, listen: false)
-                        .userInfo['described'],
+                    currentUser.described,
                     style: TextStyle(fontSize: 12),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

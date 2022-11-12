@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:imapp/convert/userContacts/user_contacts.dart';
 import 'package:imapp/viewmodel/contacts_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -52,42 +53,48 @@ class ContactsListView extends StatelessWidget {
                         child: ListView.builder(
                         itemCount: value.friendsList.length,
                         itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap: () {
-                              print(
-                                  "点击${value.friendsList[index]['contact_id']}");
-                              Navigator.of(context).pushNamed('friendInfoView',
-                                  arguments: {
-                                    "info": value.friendsList[index],
-                                    "isFriend": true
-                                  });
-                            },
-                            child: Container(
-                              width: double.infinity,
-                              color: Colors.white,
-                              child: Row(
-                                children: [
-                                  Container(
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 10),
-                                    decoration: BoxDecoration(
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(10)),
-                                        image: DecorationImage(
-                                            image: NetworkImage(
-                                                value.friendsList[index]
-                                                    ['avatar']))),
-                                    height: 50,
-                                    width: 50,
+                          // 序列化好友
+                          var userContacts =
+                              UserContacts.fromJson(value.friendsList[index]);
+                          // 判断是否是好友
+                          return userContacts.is_out == '1'
+                              ? GestureDetector(
+                                  onTap: () {
+                                    print("点击${userContacts.contact_id}");
+                                    Navigator.of(context).pushNamed(
+                                        'friendInfoView',
+                                        arguments: {
+                                          "info": userContacts.toJson(),
+                                          "isFriend": true
+                                        });
+                                  },
+                                  child: Container(
+                                    width: double.infinity,
+                                    color: Colors.white,
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 10),
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                      Radius.circular(10)),
+                                              image: DecorationImage(
+                                                  image: NetworkImage(
+                                                      userContacts.avatar))),
+                                          height: 50,
+                                          width: 50,
+                                        ),
+                                        Text(
+                                          userContacts.name,
+                                          style: TextStyle(fontSize: 18),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  Text(
-                                    value.friendsList[index]['name'],
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
+                                )
+                              : Container();
                         },
                       ));
               },
