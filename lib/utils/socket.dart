@@ -15,7 +15,7 @@ class ClientSocket {
     print('当前网络状态：${netWorkStatus}');
 
     // 建立连接
-    // 手机测试用ip 192.168.48.67
+    // 手机测试用ip 192.168.87.67
     // 宽带测试用ip 169.254.226.185
     socket = await IO.io('ws://169.254.226.185:3001', <String, dynamic>{
       'transports': ['websocket'],
@@ -23,6 +23,7 @@ class ClientSocket {
 
     //监听私聊消息
     socket.on('private message', (data) {
+      print('监听私聊消息');
       // 添加数据到本地
       Provider.of<ContactsViewModel>(context, listen: false)
           .addMsg(data['content'], false, data['room_key']);

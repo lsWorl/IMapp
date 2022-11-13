@@ -19,9 +19,9 @@ class ChatContentView extends StatefulWidget {
 class _ChatContentViewState extends State<ChatContentView> {
   // 获取到的参数
   Map? params;
-  ClientSocket clientSocket = new ClientSocket();
+  ClientSocket clientSocket = ClientSocket();
 
-  PublicStorage publicStorage = new PublicStorage();
+  PublicStorage publicStorage = PublicStorage();
   // 获取provider的用户信息
   late Map userInfo;
 
@@ -29,7 +29,8 @@ class _ChatContentViewState extends State<ChatContentView> {
   void initState() {
     params = widget.arguments;
     userInfo = Provider.of<UserProvider>(context, listen: false).userInfo;
-
+    // print(params);
+    // print(userInfo);
     // 清除未读消息提示
     Provider.of<ContactsViewModel>(context, listen: false)
         .cleanUnRead(params!['id']);

@@ -57,6 +57,7 @@ class _ChatInputState extends State<ChatInput> {
                   children: [
                     IconButton(
                         onPressed: () {
+                          hideKeyboard(context);
                           setState(() {
                             _emojiShowing = !_emojiShowing;
                           });
@@ -69,6 +70,11 @@ class _ChatInputState extends State<ChatInput> {
                         )),
                     Expanded(
                         child: TextField(
+                      onTap: () {
+                        setState(() {
+                          _emojiShowing = !_emojiShowing;
+                        });
+                      },
                       controller: _controller,
                       decoration: const InputDecoration(
                           hintText: '请输入消息...',
@@ -145,5 +151,13 @@ class _ChatInputState extends State<ChatInput> {
             buttonMode: ButtonMode.MATERIAL),
       ),
     );
+  }
+
+  // 关闭键盘
+  void hideKeyboard(BuildContext context) {
+    FocusScopeNode currentFocus = FocusScope.of(context);
+    if (!currentFocus.hasPrimaryFocus && currentFocus.focusedChild != null) {
+      FocusManager.instance.primaryFocus!.unfocus();
+    }
   }
 }
