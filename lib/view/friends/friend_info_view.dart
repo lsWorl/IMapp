@@ -118,7 +118,8 @@ class _FriendInfoViewState extends State<FriendInfoView> {
   _pressed() {
     // 判断是否是好友
     if (!params!['isFriend']) {
-      print('不是好友');
+      Navigator.pushNamed(context, 'newFriendAddInfoView',
+          arguments: info.toJson());
       // 跳转到添加好友详细页面
     } else {
       // 是好友直接进入聊天页面

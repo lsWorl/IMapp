@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:imapp/view/add_friend_view.dart';
+import 'package:imapp/view/friends/add_friend_view.dart';
 import 'package:imapp/view/chat_content_view.dart';
 import 'package:imapp/view/friends/friend_info_view.dart';
+import 'package:imapp/view/friends/new_friend_add_info_view.dart';
 import 'package:imapp/view/index_view.dart';
 import 'package:imapp/view/login_view.dart';
 import 'package:imapp/view/registry_view.dart';
@@ -16,18 +17,21 @@ Map<String, WidgetBuilder> routes = {
       ChatContentView(arguments: arguments),
   "addFriendView": (context) => const AddFriendView(),
   "friendInfoView": (context, {arguments}) =>
-      FriendInfoView(arguments: arguments)
+      FriendInfoView(arguments: arguments),
+  "newFriendAddInfoView": (context, {arguments}) =>
+      NewFriendAddInfoView(arguments: arguments),
 };
 
 // 配置传参
 var onGenerateRoute = (RouteSettings settings) {
   // 统一处理
   final String? name = settings.name;
+
   final Function pageContentBuilder = routes[name] as Function;
 
   if (pageContentBuilder != null) {
     if (settings.arguments != null) {
-      print('object');
+      print('路由带参跳转');
       final Route route = MaterialPageRoute(
           builder: (context) =>
               pageContentBuilder(context, arguments: settings.arguments));
