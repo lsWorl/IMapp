@@ -3,7 +3,11 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:imapp/convert/userContacts/user_contacts.dart';
 import 'package:imapp/model/search_model.dart';
+import 'package:imapp/provider_info/user_provider.dart';
+import 'package:imapp/viewmodel/contacts_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class AddFriendView extends StatefulWidget {
   const AddFriendView({super.key});
@@ -126,19 +130,41 @@ class _AddFriendViewState extends State<AddFriendView> {
               ? Container()
               : GestureDetector(
                   onTap: () {
+                    bool isFriend = false;
+                    String? isOut = "0";
+                    // 循环判断是否为好友
+                    for (var element in Provider.of<ContactsViewModel>(context,
+                            listen: false)
+                        .friendsList) {
+                      var userContacts = UserContacts.fromJson(element);
+                      if (userContacts.contact_id == searchResult['id'] &&
+                          userContacts.is_out == '1') {
+                        isFriend = true;
+                        isOut = userContacts.is_out;
+                        break;
+                      }
+                      // print(searchResult);
+                    }
+                    // 如果用户搜索到的信息是自己本人就跳到我的界面
+                    if (searchResult['id'] ==
+                        Provider.of<UserProvider>(context, listen: false)
+                            .userInfo['id']) {
+                      Navigator.of(context).pushNamed('index');
+                      return;
+                    }
                     // 补全信息后跳转
                     Navigator.of(context)
                         .pushNamed('friendInfoView', arguments: {
                       "info": {
                         ...searchResult,
                         "user_id": -1,
-                        "contact_id": -1,
+                        "contact_id": searchResult['id'],
                         "last_msg": "",
                         "msg_num": 0,
                         "room_key": "",
-                        "is_out": "0"
+                        "is_out": isOut
                       },
-                      "isFriend": false
+                      "isFriend": isFriend
                     });
                   },
                   child: Container(

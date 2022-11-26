@@ -21,7 +21,7 @@ class Request {
 
   Future post(String path, {Map<String, dynamic>? params}) {
     if (params != null) {
-      return _dio.post(path, queryParameters: params);
+      return _dio.post(path, data: params);
     }
     return _dio.post(path);
   }

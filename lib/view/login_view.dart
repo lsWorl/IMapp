@@ -100,10 +100,10 @@ class AccountInput extends StatefulWidget {
 }
 
 class _AccountInputState extends State<AccountInput> {
-  LoginViewModelData data = new LoginViewModelData();
-  LoginModel sendData = new LoginModel();
+  LoginViewModelData data = LoginViewModelData();
+  LoginModel sendData = LoginModel();
   // 公用api
-  ReqApi api = new ReqApi();
+  ReqApi api = ReqApi();
   // 唯一标识
   final _formKey = GlobalKey<FormState>();
 
@@ -264,10 +264,8 @@ class _AccountInputState extends State<AccountInput> {
           .then((value) {
         result = json.decode(value.toString());
       });
-      print(result);
       if (result['ok'] == 1) {
         if (!mounted) return;
-
         // 设置用户信息
         Provider.of<UserProvider>(context, listen: false).userInfo =
             result['data'];

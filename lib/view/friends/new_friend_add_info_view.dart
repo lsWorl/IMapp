@@ -1,18 +1,31 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:imapp/convert/userContacts/user_contacts.dart';
+import 'package:imapp/model/contacts_model.dart';
+import 'package:imapp/provider_info/user_provider.dart';
+import 'package:provider/provider.dart';
 
 class NewFriendAddInfoView extends StatelessWidget {
   NewFriendAddInfoView({super.key, required this.arguments});
   final Map<String, dynamic> arguments;
   // 输入框控制器
   final TextEditingController _controller = TextEditingController();
-
+  // 发送请求
+  final ContactsModel contactsModel = ContactsModel();
+  // 获取当前正文
+  late BuildContext _context;
+  // 获取当前想添加用户的id
+  late int contactId;
   @override
   Widget build(BuildContext context) {
     // 用户焦点
     FocusNode userFocusNode = FocusNode();
     UserContacts userContacts = UserContacts.fromJson(arguments);
-    print(userContacts.avatar);
+    _context = context;
+    contactId = userContacts.contact_id!;
+    // print(userContacts.avatar);
     return Scaffold(
       appBar: AppBar(
         title: const Text('发送好友请求'),
@@ -26,7 +39,7 @@ class NewFriendAddInfoView extends StatelessWidget {
           // 点击其他地方就取消焦点
           userFocusNode.unfocus();
         },
-        child: Container(
+        child: SizedBox(
           height: double.infinity,
           child: Column(
             children: [
@@ -129,9 +142,24 @@ class NewFriendAddInfoView extends StatelessWidget {
     );
   }
 
-  _sendFriendReq() {
-    print(_controller.text);
-
+  _sendFriendReq() async {
+    // 获取当前用户id
+    int currentUserId =
+        Provider.of<UserProvider>(_context, listen: false).userInfo['id'];
+    late Map<String, dynamic> result;
+    await contactsModel
+        .addFriends(currentUserId, contactId, _controller.text)
+        .then((value) {
+      result = json.decode(value.toString());
+    });
+    print(result);
+    if (result['code'] == 200) {
+      Fluttertoast.showToast(
+          msg: '成功发送好友请求！',
+          gravity: ToastGravity.CENTER,
+          backgroundColor: Colors.green,
+          fontSize: 20);
+    }
     print('发送加好友请求');
   }
 }

@@ -23,7 +23,10 @@ class _FriendInfoViewState extends State<FriendInfoView> {
     print(params);
     info = UserContacts.fromJson(params!['info']);
     // 判断当前用户是否是好友
-    buttonText = info.is_out == '1' ? buttonText : '添加好友';
+    print(params!['isFriend']);
+    print(info.is_out);
+    buttonText =
+        info.is_out == '1' && params!['isFriend'] ? buttonText : '添加好友';
   }
 
   @override

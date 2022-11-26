@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:imapp/convert/userContacts/user_contacts.dart';
 import 'package:imapp/viewmodel/contacts_viewmodel.dart';
@@ -8,6 +9,16 @@ class ContactsListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 用来记录有多少个发过来的好友请求
+    int received = 0;
+    for (var element in Provider.of<ContactsViewModel>(context).friendsList) {
+      // 序列化好友
+      var userContacts = UserContacts.fromJson(element);
+      if (userContacts.is_out == '0') {
+        received += 1;
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('联系人'),
@@ -27,7 +38,8 @@ class ContactsListView extends StatelessWidget {
             // 通用功能列表
             Column(
               children: [
-                commonList(Icons.people_alt_rounded, '添加新好友', context),
+                commonList(
+                    Icons.people_alt_rounded, '添加新好友', context, received),
                 commonList(Icons.chat_bubble, '加入群聊', context)
               ],
             ),
@@ -105,7 +117,28 @@ class ContactsListView extends StatelessWidget {
     );
   }
 
-  GestureDetector commonList(IconData icon, String text, BuildContext context) {
+  GestureDetector commonList(IconData icon, String text, BuildContext context,
+      [int? received]) {
+    if (received != null) {
+      print('输出好友申请数量${received}');
+    }
+    // 图标
+    Container Icons() {
+      return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          color: Colors.orange,
+        ),
+        height: 50,
+        width: 50,
+        child: Icon(
+          icon,
+          color: Colors.white,
+        ),
+      );
+    }
+
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushNamed('addFriendView');
@@ -115,19 +148,16 @@ class ContactsListView extends StatelessWidget {
         color: Colors.white,
         child: Row(
           children: [
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                color: Colors.orange,
-              ),
-              height: 50,
-              width: 50,
-              child: Icon(
-                icon,
-                color: Colors.white,
-              ),
-            ),
+            received != null
+                ? Badge(
+                    badgeContent: Text(
+                      received.toString(),
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    padding: const EdgeInsets.all(6.0),
+                    child: Icons(),
+                  )
+                : Icons(),
             Text(text),
           ],
         ),
