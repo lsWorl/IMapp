@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:developer';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -19,7 +19,25 @@ class AddFriendView extends StatefulWidget {
 class _AddFriendViewState extends State<AddFriendView> {
   final TextEditingController _controller = TextEditingController();
   Search search = Search();
+  // 搜索结果
   Map<String, dynamic> searchResult = {};
+  // 添加好友
+  // 这里可以把是否申请作为一个全局的数组来显示，这里就懒得优化了
+  List<dynamic> receiveResult = [];
+  @override
+  void initState() {
+    for (var element
+        in Provider.of<ContactsViewModel>(context, listen: false).friendsList) {
+      // 序列化好友
+      var userContacts = UserContacts.fromJson(element);
+      if (userContacts.is_out == '0') {
+        // print(listData(userContacts));
+        receiveResult.add(userContacts);
+      }
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,62 +81,7 @@ class _AddFriendViewState extends State<AddFriendView> {
                           ),
                         )),
                         IconButton(
-                            onPressed: () async {
-                              try {
-                                // 捕获异常，如果输入的不是数字将报错
-                                var text = int.parse(_controller.text);
-                                // ignore: unnecessary_type_check
-                                if (text is! int) {
-                                  Fluttertoast.showToast(
-                                      msg: "没有找到用户数据，请输入id或者手机号！",
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.CENTER,
-                                      timeInSecForIosWeb: 1,
-                                      backgroundColor: Colors.red,
-                                      textColor: Colors.white,
-                                      fontSize: 16.0);
-                                  setState(() {
-                                    _controller.text = '';
-                                    searchResult = {};
-                                  });
-                                  return;
-                                }
-                                await search.searchUser(text).then((value) {
-                                  Map<String, dynamic> result =
-                                      json.decode(value.toString());
-                                  print(result);
-                                  if (result['code'] == 200) {
-                                    setState(() {
-                                      // 如果为200将用户显示出来
-                                      searchResult = result['data'][0];
-                                    });
-                                  } else if (result['code'] == 406) {
-                                    Fluttertoast.showToast(
-                                        msg: "没有找到用户数据，请输入id或者手机号！",
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.CENTER,
-                                        timeInSecForIosWeb: 1,
-                                        backgroundColor: Colors.red,
-                                        textColor: Colors.white,
-                                        fontSize: 16.0);
-                                    setState(() {
-                                      _controller.text = '';
-                                      searchResult = {};
-                                    });
-                                    return;
-                                  }
-                                });
-                              } catch (e) {
-                                // 输出错误信息
-                                Fluttertoast.showToast(
-                                    msg: '请输入数字信息！',
-                                    toastLength: Toast.LENGTH_SHORT,
-                                    backgroundColor: Colors.red,
-                                    gravity: ToastGravity.CENTER);
-                                return;
-                              }
-                            },
-                            icon: Icon(Icons.search))
+                            onPressed: _searchPressed, icon: Icon(Icons.search))
                       ],
                     ),
                   ),
@@ -129,44 +92,7 @@ class _AddFriendViewState extends State<AddFriendView> {
           searchResult.isEmpty
               ? Container()
               : GestureDetector(
-                  onTap: () {
-                    bool isFriend = false;
-                    String? isOut = "0";
-                    // 循环判断是否为好友
-                    for (var element in Provider.of<ContactsViewModel>(context,
-                            listen: false)
-                        .friendsList) {
-                      var userContacts = UserContacts.fromJson(element);
-                      if (userContacts.contact_id == searchResult['id'] &&
-                          userContacts.is_out == '1') {
-                        isFriend = true;
-                        isOut = userContacts.is_out;
-                        break;
-                      }
-                      // print(searchResult);
-                    }
-                    // 如果用户搜索到的信息是自己本人就跳到我的界面
-                    if (searchResult['id'] ==
-                        Provider.of<UserProvider>(context, listen: false)
-                            .userInfo['id']) {
-                      Navigator.of(context).pushNamed('index');
-                      return;
-                    }
-                    // 补全信息后跳转
-                    Navigator.of(context)
-                        .pushNamed('friendInfoView', arguments: {
-                      "info": {
-                        ...searchResult,
-                        "user_id": -1,
-                        "contact_id": searchResult['id'],
-                        "last_msg": "",
-                        "msg_num": 0,
-                        "room_key": "",
-                        "is_out": isOut
-                      },
-                      "isFriend": isFriend
-                    });
-                  },
+                  onTap: _userClicked,
                   child: Container(
                     width: double.infinity,
                     color: Colors.white,
@@ -190,9 +116,141 @@ class _AddFriendViewState extends State<AddFriendView> {
                       ],
                     ),
                   ),
-                )
+                ),
+          Container(
+            child: const Text('好友请求'),
+          ),
+          listData()
+          // ListView.builder(
+          //   itemBuilder: (context, index) {
+          //     return receiveResult[index];
+          //   },
+          //   itemCount: receiveResult.length,
+          // )
         ],
       ),
     );
+  }
+
+  // 存放申请好友列表
+  Widget listData() {
+    return Column(
+      children: receiveResult
+          .map((e) => Container(
+                width: double.infinity,
+                color: Colors.white,
+                child: Row(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10),
+                      decoration: BoxDecoration(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
+                          image: DecorationImage(
+                              image: NetworkImage(e.toJson()['avatar']))),
+                      height: 50,
+                      width: 50,
+                    ),
+                    Text(
+                      e.toJson()['name'],
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ],
+                ),
+              ))
+          .toList(),
+    );
+  }
+
+  _searchPressed() async {
+    try {
+      // 捕获异常，如果输入的不是数字将报错
+      var text = int.parse(_controller.text);
+      // ignore: unnecessary_type_check
+      if (text is! int) {
+        Fluttertoast.showToast(
+            msg: "没有找到用户数据，请输入id或者手机号！",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        setState(() {
+          _controller.text = '';
+          searchResult = {};
+        });
+        return;
+      }
+      await search.searchUser(text).then((value) {
+        Map<String, dynamic> result = json.decode(value.toString());
+        print(result);
+        if (result['code'] == 200) {
+          setState(() {
+            // 如果为200将用户显示出来
+            searchResult = result['data'][0];
+          });
+        } else if (result['code'] == 406) {
+          Fluttertoast.showToast(
+              msg: "没有找到用户数据，请输入id或者手机号！",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+          setState(() {
+            _controller.text = '';
+            searchResult = {};
+          });
+          return;
+        }
+      });
+    } catch (e) {
+      // 输出错误信息
+      Fluttertoast.showToast(
+          msg: '请输入数字信息！',
+          toastLength: Toast.LENGTH_SHORT,
+          backgroundColor: Colors.red,
+          gravity: ToastGravity.CENTER);
+      return;
+    }
+  }
+
+  _userClicked() {
+    bool isFriend = false;
+    String? isOut = "0";
+    // 循环判断是否为好友
+    for (var element
+        in Provider.of<ContactsViewModel>(context, listen: false).friendsList) {
+      var userContacts = UserContacts.fromJson(element);
+      if (userContacts.contact_id == searchResult['id'] &&
+          userContacts.is_out == '1') {
+        isFriend = true;
+        isOut = userContacts.is_out;
+        break;
+      }
+      // print(searchResult);
+    }
+    // 如果用户搜索到的信息是自己本人就跳到我的界面
+    if (searchResult['id'] ==
+        Provider.of<UserProvider>(context, listen: false).userInfo['id']) {
+      Navigator.of(context).pushNamed('index');
+      return;
+    }
+    // 补全信息后跳转
+    Navigator.of(context).pushNamed('friendInfoView', arguments: {
+      "info": {
+        ...searchResult,
+        "user_id": -1,
+        "contact_id": searchResult['id'],
+        "last_msg": "",
+        "msg_num": 0,
+        "room_key": "",
+        "is_out": isOut
+      },
+      "isFriend": isFriend
+    });
   }
 }

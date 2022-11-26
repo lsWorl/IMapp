@@ -18,16 +18,16 @@ class ContactsViewModel extends ChangeNotifier {
   List _friendsContactContent = [];
 
   // 添加好友
-  void addFriend() {
-    // _friendsList.add({
-    //   "img":
-    //       "https://tse1-mm.cn.bing.net/th/id/OIP-C._xbmyprGLEovhHf79ojIawHaHa?pid=ImgDet&rs=1",
-    //   "name": "李四",
-    //   "id": _friendsList.length + 1
-    // });
-    // 更新后通知
-    notifyListeners();
-  }
+  // void addFriend() {
+  //   // _friendsList.add({
+  //   //   "img":
+  //   //       "https://tse1-mm.cn.bing.net/th/id/OIP-C._xbmyprGLEovhHf79ojIawHaHa?pid=ImgDet&rs=1",
+  //   //   "name": "李四",
+  //   //   "id": _friendsList.length + 1
+  //   // });
+  //   // 更新后通知
+  //   notifyListeners();
+  // }
 
   void setfriendsList(List value) {
     _friendsList = value;
