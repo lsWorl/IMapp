@@ -19,4 +19,12 @@ class ContactsModel {
       "roomKey": roomKey
     });
   }
+
+  // 确认添加好友
+  Future confirmFriend(int userId, int contactId, String roomKey) {
+    print(
+        '确认添加好友接收到的userId:${userId},contactId:${contactId},roomKey:${roomKey}');
+    return http.post('/userContacts/confirm',
+        params: {"userId": userId, "contactId": contactId, "roomKey": roomKey});
+  }
 }

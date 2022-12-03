@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:flutter/cupertino.dart';
+import 'package:imapp/convert/userContacts/user_contacts.dart';
 import 'package:imapp/utils/public_storage.dart';
 
 /**
@@ -17,17 +18,12 @@ class ContactsViewModel extends ChangeNotifier {
   // 与好友聊天信息
   List _friendsContactContent = [];
 
-  // 添加好友
-  // void addFriend() {
-  //   // _friendsList.add({
-  //   //   "img":
-  //   //       "https://tse1-mm.cn.bing.net/th/id/OIP-C._xbmyprGLEovhHf79ojIawHaHa?pid=ImgDet&rs=1",
-  //   //   "name": "李四",
-  //   //   "id": _friendsList.length + 1
-  //   // });
-  //   // 更新后通知
-  //   notifyListeners();
-  // }
+  // 修改是否同为好友状态
+  void stateHandler(int index) {
+    _friendsList[index]['is_out'] = '1';
+    // 更新后通知
+    notifyListeners();
+  }
 
   void setfriendsList(List value) {
     _friendsList = value;

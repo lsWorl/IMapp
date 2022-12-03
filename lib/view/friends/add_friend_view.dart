@@ -4,6 +4,7 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:imapp/convert/userContacts/user_contacts.dart';
+import 'package:imapp/model/contacts_model.dart';
 import 'package:imapp/model/search_model.dart';
 import 'package:imapp/provider_info/user_provider.dart';
 import 'package:imapp/viewmodel/contacts_viewmodel.dart';
@@ -19,21 +20,27 @@ class AddFriendView extends StatefulWidget {
 class _AddFriendViewState extends State<AddFriendView> {
   final TextEditingController _controller = TextEditingController();
   Search search = Search();
+  ContactsModel contactsModel = ContactsModel();
   // 搜索结果
   Map<String, dynamic> searchResult = {};
   // 添加好友
   // 这里可以把是否申请作为一个全局的数组来显示，这里就懒得优化了
   List<dynamic> receiveResult = [];
+  // 记录是数组的第几位，后面前端修改可以减少一次循环
+  Map<String, int> arrNum = {};
   @override
   void initState() {
+    int count = 0;
+    // print(object)
     for (var element
         in Provider.of<ContactsViewModel>(context, listen: false).friendsList) {
       // 序列化好友
       var userContacts = UserContacts.fromJson(element);
       if (userContacts.is_out == '0') {
-        // print(listData(userContacts));
+        arrNum[userContacts.contact_id.toString()] = count;
         receiveResult.add(userContacts);
       }
+      count++;
     }
     super.initState();
   }
@@ -133,38 +140,42 @@ class _AddFriendViewState extends State<AddFriendView> {
 
   // 存放申请好友列表
   Widget listData() {
-    return Column(
-      children: receiveResult
-          .map((e) => GestureDetector(
-                onTap: () {
-                  _showDialog(e);
-                },
-                child: Container(
-                  width: double.infinity,
-                  color: Colors.white,
-                  child: Row(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 10),
-                        decoration: BoxDecoration(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(10)),
-                            image: DecorationImage(
-                                image: NetworkImage(e.toJson()['avatar']))),
-                        height: 50,
-                        width: 50,
-                      ),
-                      Text(
-                        e.toJson()['name'],
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ],
+    return Consumer<ContactsViewModel>(
+        builder: ((context, contactsViewModel, child) {
+      return Column(
+        children: receiveResult
+            .map((e) => GestureDetector(
+                  onTap: () {
+                    // print(e.toJson()['contact_id']);
+                    _showDialog(e);
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    color: Colors.white,
+                    child: Row(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 10),
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(10)),
+                              image: DecorationImage(
+                                  image: NetworkImage(e.toJson()['avatar']))),
+                          height: 50,
+                          width: 50,
+                        ),
+                        Text(
+                          e.toJson()['name'],
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ))
-          .toList(),
-    );
+                ))
+            .toList(),
+      );
+    }));
   }
 
   // 显示弹窗
@@ -185,7 +196,31 @@ class _AddFriendViewState extends State<AddFriendView> {
               TextButton(
                   onPressed: () {
                     // 点击后确认添加好友
-                    print(e.toJson());
+                    contactsModel
+                        .confirmFriend(e.toJson()['user_id'],
+                            e.toJson()['contact_id'], e.toJson()['room_key'])
+                        .then((value) {
+                      Map<String, dynamic> result =
+                          json.decode(value.toString());
+                      if (result['code'] == 200) {
+                        print('修改成功');
+                        setState(() {
+                          receiveResult = [];
+                        });
+                        Provider.of<ContactsViewModel>(context, listen: false)
+                            .stateHandler(
+                                arrNum[e.toJson()['contact_id'].toString()]!);
+                        Navigator.of(context).pop();
+                        Fluttertoast.showToast(
+                            msg: "好友添加成功！",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.green,
+                            textColor: Colors.white,
+                            fontSize: 16.0);
+                      }
+                    });
                   },
                   child: const Text("确定")),
             ],

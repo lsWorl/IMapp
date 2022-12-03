@@ -148,7 +148,7 @@ class ContactsListView extends StatelessWidget {
         color: Colors.white,
         child: Row(
           children: [
-            received != null
+            received != null && received != 0
                 ? Badge(
                     badgeContent: Text(
                       received.toString(),
