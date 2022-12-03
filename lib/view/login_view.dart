@@ -83,7 +83,7 @@ class SubTitle extends StatelessWidget {
       child: const Align(
         alignment: Alignment(-1, 0),
         child: Text(
-          '欢迎来到我的app！',
+          '欢迎来到IM即时通讯！',
           style: TextStyle(fontSize: 24, fontFamily: '宋体', color: Colors.grey),
         ),
       ),

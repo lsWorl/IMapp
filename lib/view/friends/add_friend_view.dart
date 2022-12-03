@@ -118,15 +118,14 @@ class _AddFriendViewState extends State<AddFriendView> {
                   ),
                 ),
           Container(
-            child: const Text('好友请求'),
+            padding: EdgeInsets.symmetric(vertical: 10),
+            child: const Text(
+              '好友请求',
+              style: TextStyle(fontSize: 20),
+            ),
           ),
+          const Divider(),
           listData()
-          // ListView.builder(
-          //   itemBuilder: (context, index) {
-          //     return receiveResult[index];
-          //   },
-          //   itemCount: receiveResult.length,
-          // )
         ],
       ),
     );
@@ -136,33 +135,65 @@ class _AddFriendViewState extends State<AddFriendView> {
   Widget listData() {
     return Column(
       children: receiveResult
-          .map((e) => Container(
-                width: double.infinity,
-                color: Colors.white,
-                child: Row(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 10),
-                      decoration: BoxDecoration(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(10)),
-                          image: DecorationImage(
-                              image: NetworkImage(e.toJson()['avatar']))),
-                      height: 50,
-                      width: 50,
-                    ),
-                    Text(
-                      e.toJson()['name'],
-                      style: TextStyle(fontSize: 18),
-                    ),
-                  ],
+          .map((e) => GestureDetector(
+                onTap: () {
+                  _showDialog(e);
+                },
+                child: Container(
+                  width: double.infinity,
+                  color: Colors.white,
+                  child: Row(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 10),
+                        decoration: BoxDecoration(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(10)),
+                            image: DecorationImage(
+                                image: NetworkImage(e.toJson()['avatar']))),
+                        height: 50,
+                        width: 50,
+                      ),
+                      Text(
+                        e.toJson()['name'],
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ],
+                  ),
                 ),
               ))
           .toList(),
     );
   }
 
+  // 显示弹窗
+  _showDialog(e) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('好友请求'),
+            content: Text('确认要添加好友吗？'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("取消"),
+              ),
+              TextButton(
+                  onPressed: () {
+                    // 点击后确认添加好友
+                    print(e.toJson());
+                  },
+                  child: const Text("确定")),
+            ],
+          );
+        });
+  }
+
+  // 点击搜索按钮
   _searchPressed() async {
     try {
       // 捕获异常，如果输入的不是数字将报错
