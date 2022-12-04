@@ -5,6 +5,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:imapp/convert/user/user.dart';
+import 'package:imapp/model/upload_model.dart';
 import 'package:imapp/provider_info/user_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -18,11 +19,12 @@ class MyInfoSettingView extends StatefulWidget {
 class _MyInfoSettingViewState extends State<MyInfoSettingView> {
   //实例化选择图片
   final ImagePicker _picker = ImagePicker();
-
+  // 请求
+  UploadModel uploadModel = UploadModel();
   @override
   Widget build(BuildContext context) {
     //用户本地图片
-    File _userImage; //存放获取到的本地路径
+    XFile _userImage; //存放获取到的本地路径
     // 序列化用户
     var user = User.fromJson(Provider.of<UserProvider>(context).userInfo);
     return Scaffold(
@@ -43,8 +45,10 @@ class _MyInfoSettingViewState extends State<MyInfoSettingView> {
               getImage().then((value) {
                 print('获取图片');
                 if (value != null) {
-                  _userImage = File(value.path);
-                  print(_userImage);
+                  _userImage = value;
+                  print(File(_userImage.path));
+                  uploadModel.imageUpload(File(_userImage.path));
+                  // print(_userImage);
                 }
               });
             },
