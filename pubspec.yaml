@@ -59,7 +59,7 @@ dependencies:
   # 徽章提示
   badges: ^2.0.3
   json_annotation: ^4.7.0
-  
+  image_picker: ^0.8.6
 
 dev_dependencies:
   flutter_test: 

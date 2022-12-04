@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:imapp/convert/user/user.dart';
 import 'package:imapp/provider_info/user_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -7,10 +8,11 @@ class MyCenterView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String avatar = Provider.of<UserProvider>(context).userInfo['avatar'];
+    // 序列化用户
+    var user = User.fromJson(Provider.of<UserProvider>(context).userInfo);
     return Scaffold(
       body: Container(
-        padding: EdgeInsets.only(top: 50),
+        padding: const EdgeInsets.only(top: 50),
         child: Column(
           children: [
             Row(
@@ -18,22 +20,26 @@ class MyCenterView extends StatelessWidget {
                 Container(
                     height: 70,
                     width: 70,
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
                         borderRadius:
                             const BorderRadius.all(Radius.circular(10)),
-                        image: DecorationImage(image: NetworkImage(avatar)))),
+                        image:
+                            DecorationImage(image: NetworkImage(user.avatar)))),
                 Column(
-                  children: const [
+                  children: [
                     Padding(
-                      padding: EdgeInsets.only(left: 10, bottom: 10),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 10),
                       child: Text(
-                        '名字',
-                        style: TextStyle(fontSize: 20),
+                        user.name,
+                        style: const TextStyle(fontSize: 20),
                       ),
                     ),
                     Text(
-                      'Id:1',
-                      style: TextStyle(
+                      'Id:${user.id}',
+                      style: const TextStyle(
                           fontSize: 16,
                           color: Color.fromARGB(255, 120, 120, 120)),
                     ),
@@ -41,14 +47,24 @@ class MyCenterView extends StatelessWidget {
                 ),
               ],
             ),
-            Container(
-              color: Color.fromARGB(255, 120, 120, 120),
-              height: 20,
-              child: SizedBox(
-                height: 20,
-                width: double.infinity,
-              ),
-            )
+            const Divider(
+              thickness: 10,
+            ),
+            ListTile(
+              leading: const Icon(Icons.account_circle),
+              title: const Text('个人信息'),
+              onTap: () {
+                Navigator.pushNamed(context, 'myInfoSettingView');
+              },
+            ),
+            const ListTile(
+              leading: Icon(Icons.cached_sharp),
+              title: Text('修改密码'),
+            ),
+            const ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('设置'),
+            ),
           ],
         ),
       ),

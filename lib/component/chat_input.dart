@@ -72,7 +72,7 @@ class _ChatInputState extends State<ChatInput> {
                         child: TextField(
                       onTap: () {
                         setState(() {
-                          _emojiShowing = !_emojiShowing;
+                          // _emojiShowing = !_emojiShowing;
                         });
                       },
                       controller: _controller,

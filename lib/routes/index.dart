@@ -5,6 +5,7 @@ import 'package:imapp/view/friends/friend_info_view.dart';
 import 'package:imapp/view/friends/new_friend_add_info_view.dart';
 import 'package:imapp/view/index_view.dart';
 import 'package:imapp/view/login_view.dart';
+import 'package:imapp/view/my/my_info_setting_view.dart';
 import 'package:imapp/view/registry_view.dart';
 
 // 路由
@@ -20,6 +21,7 @@ Map<String, WidgetBuilder> routes = {
       FriendInfoView(arguments: arguments),
   "newFriendAddInfoView": (context, {arguments}) =>
       NewFriendAddInfoView(arguments: arguments),
+  'myInfoSettingView': (context) => MyInfoSettingView()
 };
 
 // 配置传参
