@@ -84,7 +84,7 @@ class _ChatContentViewState extends State<ChatContentView> {
                   },
                 );
               })),
-              ChatInput(sendMessage: _sendMessage)
+              ChatInput(sendMessage: _sendMessage),
             ],
           ),
         ),

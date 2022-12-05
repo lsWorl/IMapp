@@ -19,10 +19,10 @@ class Request {
     return _dio.get(path);
   }
 
-  Future post(String path, {Map<String, dynamic>? params}) {
+  Future post(String path, {dynamic? params, options}) {
     if (params != null) {
-      return _dio.post(path, data: params);
+      return _dio.post(path, data: params, options: options);
     }
-    return _dio.post(path);
+    return _dio.post(path, options: options);
   }
 }

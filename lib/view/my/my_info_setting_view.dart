@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -42,12 +43,23 @@ class _MyInfoSettingViewState extends State<MyInfoSettingView> {
           ),
           InkWell(
             onTap: () async {
-              getImage().then((value) {
+              late Map result;
+              await getImage().then((value) async {
                 print('获取图片');
                 if (value != null) {
                   _userImage = value;
                   print(File(_userImage.path));
-                  uploadModel.imageUpload(File(_userImage.path));
+                  await uploadModel
+                      .imageUpload(File(_userImage.path), user.id)
+                      .then((res) {
+                    print('请求接收');
+                    result = json.decode(res.toString());
+                    print(result);
+                    if (result['code'] == 200) {
+                      Provider.of<UserProvider>(context, listen: false)
+                          .modifyAvatar(result['data']['avatarPath']);
+                    }
+                  });
                   // print(_userImage);
                 }
               });

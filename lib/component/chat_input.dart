@@ -13,6 +13,7 @@ class ChatInput extends StatefulWidget {
 
 class _ChatInputState extends State<ChatInput> {
   bool _emojiShowing = false;
+  bool _extraShow = false;
   final TextEditingController _controller = TextEditingController();
 
   _onEmojiSelected(Emoji emoji) {
@@ -60,6 +61,7 @@ class _ChatInputState extends State<ChatInput> {
                           hideKeyboard(context);
                           setState(() {
                             _emojiShowing = !_emojiShowing;
+                            _extraShow = false;
                           });
                         },
                         highlightColor: Colors.transparent, // 透明色
@@ -82,6 +84,7 @@ class _ChatInputState extends State<ChatInput> {
                           border: InputBorder.none),
                     )),
                     sendButton(),
+                    extraButton()
                   ],
                 ),
               ))
@@ -100,6 +103,20 @@ class _ChatInputState extends State<ChatInput> {
             child: emojiDisplay(),
           ),
         ),
+        // 弹出更多功能
+        Visibility(
+          visible: _extraShow,
+          maintainState: true,
+          maintainAnimation: true,
+          maintainSize: true,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 80),
+            height: _extraShow ? 200 : 0,
+            child: SizedBox(
+                // child: GridView(gridDelegate: gridDelegate),
+                ),
+          ),
+        ),
       ],
     );
   }
@@ -116,6 +133,22 @@ class _ChatInputState extends State<ChatInput> {
         }
       },
       icon: const Icon(Icons.send),
+      color: Colors.blue,
+      highlightColor: Colors.transparent, // 透明色
+      splashColor: Colors.transparent, // 透明色
+    );
+  }
+
+  IconButton extraButton() {
+    return IconButton(
+      onPressed: () {
+        hideKeyboard(context);
+        setState(() {
+          _extraShow = !_extraShow;
+          _emojiShowing = false;
+        });
+      },
+      icon: const Icon(Icons.add_box),
       color: Colors.blue,
       highlightColor: Colors.transparent, // 透明色
       splashColor: Colors.transparent, // 透明色
