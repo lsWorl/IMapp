@@ -10,7 +10,9 @@ import '../utils/socket.dart';
 class ChatInput extends StatefulWidget {
   // 传入一个要发送的消息
   final Function sendMessage;
-  const ChatInput({super.key, required this.sendMessage});
+  final String room_key;
+  const ChatInput(
+      {super.key, required this.sendMessage, required this.room_key});
 
   @override
   State<ChatInput> createState() => _ChatInputState();
@@ -30,6 +32,7 @@ class _ChatInputState extends State<ChatInput> {
   @override
   void initState() {
     // print('object');
+    print(widget.room_key);
     super.initState();
   }
 
@@ -157,9 +160,8 @@ class _ChatInputState extends State<ChatInput> {
         await getImage().then((value) {
           if (value != null) {
             _userImage = value;
-            _clientSocket.sendFile(context, File(_userImage.path), 11);
-            Provider.of<ContactsViewModel>(context, listen: false)
-                .addMsg(File(_userImage.path), true, '123');
+            _clientSocket.sendFile(
+                context, File(_userImage.path), widget.room_key);
           }
         });
       },

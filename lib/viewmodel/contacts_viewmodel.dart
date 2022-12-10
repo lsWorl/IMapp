@@ -40,8 +40,9 @@ class ContactsViewModel extends ChangeNotifier {
     // 通过房间来实现存储到一个相同位置
     PublicStorage publicStorage = new PublicStorage();
     _friendsContactContent.add({'msg': content, 'isSender': isSelf});
+    print(roomKey);
     // 将数据存储到本地
-    // publicStorage.setHistoryList(roomKey, _friendsContactContent);
+    publicStorage.setHistoryList(roomKey, _friendsContactContent);
     notifyListeners();
   }
 
@@ -60,6 +61,7 @@ class ContactsViewModel extends ChangeNotifier {
 
   // 获取本地消息后替换
   void replaceMsgContent(List content) {
+    print(content);
     _friendsContactContent = content;
     notifyListeners();
   }

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -73,18 +74,18 @@ class _ChatContentViewState extends State<ChatContentView> {
                   itemBuilder: (context, index) {
                     dynamic msg = value.friendsContactContent[index]['msg'];
                     bool isImage = false;
-                    // 判断消息是不是图片并且是否是用户发送
+                    // 判断消息是不是图片
                     if (msg is String) {
                       isImage = msg.contains('communications');
-                    } else if (msg is File) {
-                      isImage = true;
                     }
                     // 判断是否包含图片路径或者是文件路径
                     return isImage
                         ? Container(
                             margin: EdgeInsets.symmetric(horizontal: 10),
                             child: Align(
-                              alignment: msg is File
+                              // 判断是不是自己发送的消息
+                              alignment: value.friendsContactContent[index]
+                                      ['isSender']
                                   ? Alignment.centerRight
                                   : Alignment.centerLeft,
                               child: Card(
@@ -92,20 +93,12 @@ class _ChatContentViewState extends State<ChatContentView> {
                                     borderRadius:
                                         BorderRadiusDirectional.circular(10)),
                                 clipBehavior: Clip.antiAlias,
-                                child: msg is File
-                                    ? Image.file(
-                                        msg,
-                                        width: 200,
-                                        height: 200,
-                                        fit: BoxFit.cover,
-                                      )
-                                    : Image.network(
-                                        value.friendsContactContent[index]
-                                            ['msg'],
-                                        width: 200,
-                                        height: 200,
-                                        fit: BoxFit.cover,
-                                      ),
+                                child: Image.network(
+                                  value.friendsContactContent[index]['msg'],
+                                  width: 200,
+                                  height: 200,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                           )
@@ -125,7 +118,10 @@ class _ChatContentViewState extends State<ChatContentView> {
                   },
                 );
               })),
-              ChatInput(sendMessage: _sendMessage),
+              ChatInput(
+                sendMessage: _sendMessage,
+                room_key: params!['room_key'],
+              ),
             ],
           ),
         ),

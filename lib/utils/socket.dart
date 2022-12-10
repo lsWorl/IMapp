@@ -41,13 +41,19 @@ class ClientSocket {
 
     // 监听图片发送信息
     socket.on('send images', (data) {
-      print('接收到图片的路径');
-      print(data);
+      print('接收到对方发来的图片');
+      print(data['room_key']);
+      print(data['image_path']);
       // 添加数据到本地
       Provider.of<ContactsViewModel>(context, listen: false)
-          .addMsg(data, false, '123');
+          .addMsg(data['image_path'], false, data['room_key']);
     });
-
+    // 监听接收图片路径
+    socket.on('receive images', (data) {
+      // 添加数据到本地
+      Provider.of<ContactsViewModel>(context, listen: false)
+          .addMsg(data['image_path'], true, data['room_key']);
+    });
     // 连接成功
     socket.on('connect', (data) {
       print('connect...');
@@ -89,10 +95,10 @@ class ClientSocket {
   }
 
   // 发送文件给客户端
-  sendFile(context, File file, int id) async {
+  sendFile(context, File file, String room_key) async {
     var bytes = await file.readAsBytes();
     Provider.of<SocketProvider>(context, listen: false)
         .socket
-        .emit('send images', bytes);
+        .emit('send images', {"image": bytes, "room_key": room_key});
   }
 }
