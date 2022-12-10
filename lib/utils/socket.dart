@@ -1,8 +1,14 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:imapp/provider_info/socket_provider.dart';
 import 'package:imapp/provider_info/user_provider.dart';
 import 'package:imapp/viewmodel/contacts_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:socket_io_client/socket_io_client.dart';
 
 class ClientSocket {
   bool netWorkStatus = true;
@@ -17,9 +23,10 @@ class ClientSocket {
     // 建立连接
     // 手机测试用ip 192.168.87.67
     // 宽带测试用ip 169.254.226.185
-    socket = await IO.io('ws://169.254.226.185:3001', <String, dynamic>{
-      'transports': ['websocket'],
-    });
+    socket = await IO.io(
+        'ws://169.254.226.185:3001',
+        OptionBuilder().setTransports(['websocket']).setExtraHeaders(
+            {"Content-Type": Headers.formUrlEncodedContentType}).build());
 
     //监听私聊消息
     socket.on('private message', (data) {
@@ -30,6 +37,15 @@ class ClientSocket {
       // 从对方收到的最后消息
       Provider.of<ContactsViewModel>(context, listen: false)
           .addLastMsg(data['content'], data['room_key']);
+    });
+
+    // 监听图片发送信息
+    socket.on('send images', (data) {
+      print('接收到图片的路径');
+      print(data);
+      // 添加数据到本地
+      Provider.of<ContactsViewModel>(context, listen: false)
+          .addMsg(data, false, '123');
     });
 
     // 连接成功
@@ -70,5 +86,13 @@ class ClientSocket {
         (data) {
       print('接收到私聊消息' + data);
     });
+  }
+
+  // 发送文件给客户端
+  sendFile(context, File file, int id) async {
+    var bytes = await file.readAsBytes();
+    Provider.of<SocketProvider>(context, listen: false)
+        .socket
+        .emit('send images', bytes);
   }
 }

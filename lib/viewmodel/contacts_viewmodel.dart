@@ -36,11 +36,12 @@ class ContactsViewModel extends ChangeNotifier {
   }
 
   // 添加消息
-  void addMsg(String content, bool isSelf, String roomKey) {
+  void addMsg(dynamic content, bool isSelf, String roomKey) {
     // 通过房间来实现存储到一个相同位置
     PublicStorage publicStorage = new PublicStorage();
     _friendsContactContent.add({'msg': content, 'isSender': isSelf});
-    publicStorage.setHistoryList(roomKey, _friendsContactContent);
+    // 将数据存储到本地
+    // publicStorage.setHistoryList(roomKey, _friendsContactContent);
     notifyListeners();
   }
 

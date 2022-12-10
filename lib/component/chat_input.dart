@@ -1,6 +1,11 @@
 import 'dart:io';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:imapp/viewmodel/contacts_viewmodel.dart';
+import 'package:provider/provider.dart';
+
+import '../utils/socket.dart';
 
 class ChatInput extends StatefulWidget {
   // 传入一个要发送的消息
@@ -12,9 +17,21 @@ class ChatInput extends StatefulWidget {
 }
 
 class _ChatInputState extends State<ChatInput> {
+  // socket客户端
+  ClientSocket _clientSocket = ClientSocket();
+  //实例化选择图片
+  final ImagePicker _picker = ImagePicker();
+  //用户本地图片
+  late XFile _userImage;
   bool _emojiShowing = false;
   bool _extraShow = false;
   final TextEditingController _controller = TextEditingController();
+
+  @override
+  void initState() {
+    // print('object');
+    super.initState();
+  }
 
   _onEmojiSelected(Emoji emoji) {
     print('拼接中...');
@@ -74,7 +91,8 @@ class _ChatInputState extends State<ChatInput> {
                         child: TextField(
                       onTap: () {
                         setState(() {
-                          // _emojiShowing = !_emojiShowing;
+                          _emojiShowing = false;
+                          _extraShow = false;
                         });
                       },
                       controller: _controller,
@@ -111,13 +129,62 @@ class _ChatInputState extends State<ChatInput> {
           maintainSize: true,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 80),
-            height: _extraShow ? 200 : 0,
+            height: _extraShow ? 300 : 0,
             child: SizedBox(
-                // child: GridView(gridDelegate: gridDelegate),
-                ),
+                child: GridView.count(
+              crossAxisCount: 4,
+              crossAxisSpacing: 30,
+              mainAxisSpacing: 10,
+              //GridView内边距
+              padding: EdgeInsets.all(30.0),
+              children: [
+                getItemContainer(Icons.mic, '语音按钮'),
+                getItemContainer(Icons.picture_in_picture, '发送图片'),
+                // getItemContainer(Icons.file_copy),
+                // getItemContainer(Icons.ad_units),
+              ],
+            )),
           ),
         ),
       ],
+    );
+  }
+
+  // 展示额外界面的内容
+  Widget getItemContainer(IconData icon, String notice) {
+    return GestureDetector(
+      onTap: () async {
+        await getImage().then((value) {
+          if (value != null) {
+            _userImage = value;
+            _clientSocket.sendFile(context, File(_userImage.path), 11);
+            Provider.of<ContactsViewModel>(context, listen: false)
+                .addMsg(File(_userImage.path), true, '123');
+          }
+        });
+      },
+      child: Column(
+        // mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(16),
+                ),
+                color: Colors.white),
+            child: Icon(
+              icon,
+              size: 50,
+            ),
+          ),
+          Text(
+            notice,
+            style: TextStyle(fontSize: 14),
+          )
+        ],
+      ),
     );
   }
 
@@ -192,5 +259,10 @@ class _ChatInputState extends State<ChatInput> {
     if (!currentFocus.hasPrimaryFocus && currentFocus.focusedChild != null) {
       FocusManager.instance.primaryFocus!.unfocus();
     }
+  }
+
+  // 打开照片
+  Future getImage() async {
+    return await _picker.pickImage(source: ImageSource.gallery);
   }
 }

@@ -25,7 +25,7 @@ class _MyInfoSettingViewState extends State<MyInfoSettingView> {
   @override
   Widget build(BuildContext context) {
     //用户本地图片
-    XFile _userImage; //存放获取到的本地路径
+    XFile _userImage;
     // 序列化用户
     var user = User.fromJson(Provider.of<UserProvider>(context).userInfo);
     return Scaffold(
@@ -45,16 +45,16 @@ class _MyInfoSettingViewState extends State<MyInfoSettingView> {
             onTap: () async {
               late Map result;
               await getImage().then((value) async {
-                print('获取图片');
+                // print('获取图片');
                 if (value != null) {
                   _userImage = value;
-                  print(File(_userImage.path));
+                  // print(File(_userImage.path));
                   await uploadModel
                       .imageUpload(File(_userImage.path), user.id)
                       .then((res) {
                     print('请求接收');
                     result = json.decode(res.toString());
-                    print(result);
+                    // print(result);
                     if (result['code'] == 200) {
                       Provider.of<UserProvider>(context, listen: false)
                           .modifyAvatar(result['data']['avatarPath']);

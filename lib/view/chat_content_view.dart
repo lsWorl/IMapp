@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
 import 'package:imapp/component/chat_input.dart';
@@ -69,18 +71,57 @@ class _ChatContentViewState extends State<ChatContentView> {
                   // 数量
                   itemCount: value.friendsContactContent.length,
                   itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5),
-                      child: BubbleNormal(
-                        text: value.friendsContactContent[index]['msg'],
-                        isSender: value.friendsContactContent[index]
-                            ['isSender'],
-                        color: value.friendsContactContent[index]['isSender']
-                            ? const Color(0xFF1B97F3)
-                            : const Color(0xFFE8E8EE),
-                        tail: true,
-                      ),
-                    );
+                    dynamic msg = value.friendsContactContent[index]['msg'];
+                    bool isImage = false;
+                    // 判断消息是不是图片并且是否是用户发送
+                    if (msg is String) {
+                      isImage = msg.contains('communications');
+                    } else if (msg is File) {
+                      isImage = true;
+                    }
+                    // 判断是否包含图片路径或者是文件路径
+                    return isImage
+                        ? Container(
+                            margin: EdgeInsets.symmetric(horizontal: 10),
+                            child: Align(
+                              alignment: msg is File
+                                  ? Alignment.centerRight
+                                  : Alignment.centerLeft,
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadiusDirectional.circular(10)),
+                                clipBehavior: Clip.antiAlias,
+                                child: msg is File
+                                    ? Image.file(
+                                        msg,
+                                        width: 200,
+                                        height: 200,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Image.network(
+                                        value.friendsContactContent[index]
+                                            ['msg'],
+                                        width: 200,
+                                        height: 200,
+                                        fit: BoxFit.cover,
+                                      ),
+                              ),
+                            ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 5),
+                            child: BubbleNormal(
+                              text: value.friendsContactContent[index]['msg'],
+                              isSender: value.friendsContactContent[index]
+                                  ['isSender'],
+                              color: value.friendsContactContent[index]
+                                      ['isSender']
+                                  ? const Color(0xFF1B97F3)
+                                  : const Color(0xFFE8E8EE),
+                              tail: true,
+                            ),
+                          );
                   },
                 );
               })),
