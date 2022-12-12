@@ -130,36 +130,46 @@ class _MyInfoSettingViewState extends State<MyInfoSettingView> {
   }
 
   Widget _item(String title, String subInfo) {
-    return Flex(
-      direction: Axis.horizontal,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.only(left: 20),
-              child: Text(
-                title,
-                style: const TextStyle(fontSize: 20),
+    return GestureDetector(
+      onTap: () {
+        switch (title) {
+          case '签名':
+            print('object');
+            break;
+          default:
+        }
+      },
+      child: Flex(
+        direction: Axis.horizontal,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.only(left: 20),
+                child: Text(
+                  title,
+                  style: const TextStyle(fontSize: 20),
+                ),
               ),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              width: 300,
-              child: Text(
-                subInfo,
-                overflow: TextOverflow.ellipsis,
-                softWrap: true,
-                style: const TextStyle(fontSize: 20),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                width: 300,
+                child: Text(
+                  subInfo,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: true,
+                  style: const TextStyle(fontSize: 20),
+                ),
               ),
-            ),
-          ],
-        ),
-        const Icon(
-          Icons.arrow_right_rounded,
-          size: 40,
-        )
-      ],
+            ],
+          ),
+          const Icon(
+            Icons.arrow_right_rounded,
+            size: 40,
+          )
+        ],
+      ),
     );
   }
 }

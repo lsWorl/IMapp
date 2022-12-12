@@ -4,8 +4,7 @@ class Request {
   // 配置实例
   static final BaseOptions _options = BaseOptions(
       // 宽带测试用ip 169.254.226.185
-      // wifi 192.168.87.67
-      baseUrl: 'http://169.254.226.185:3001/',
+      baseUrl: 'http://192.168.126.67:3001/',
       connectTimeout: 5000,
       receiveTimeout: 5000);
 

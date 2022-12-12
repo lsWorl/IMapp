@@ -12,4 +12,10 @@ class LoginModel {
   Future logOutUser(int id) {
     return http.get('/users/logOut', params: {'id': id});
   }
+
+  // 修改密码
+  Future modifyPassword(int id, String password) {
+    return http
+        .post('/users/modifyPwd', params: {'id': id, 'password': password});
+  }
 }

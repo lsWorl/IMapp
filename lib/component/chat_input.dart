@@ -31,8 +31,6 @@ class _ChatInputState extends State<ChatInput> {
 
   @override
   void initState() {
-    // print('object');
-    print(widget.room_key);
     super.initState();
   }
 
@@ -263,7 +261,7 @@ class _ChatInputState extends State<ChatInput> {
     }
   }
 
-  // 打开照片
+  // 打开相册
   Future getImage() async {
     return await _picker.pickImage(source: ImageSource.gallery);
   }

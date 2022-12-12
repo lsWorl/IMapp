@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:imapp/convert/user/user.dart';
 import 'package:imapp/model/login_model.dart';
 import 'package:imapp/provider_info/user_provider.dart';
@@ -14,6 +15,8 @@ class MyCenterView extends StatelessWidget {
     // 保存全局的context
     BuildContext _context = context;
     LoginModel loginModel = LoginModel();
+    // 密码
+    String _password = '';
     // 序列化用户
     var user = User.fromJson(Provider.of<UserProvider>(context).userInfo);
 
@@ -45,6 +48,86 @@ class MyCenterView extends StatelessWidget {
                               _context, 'login', (route) => false);
                         }
                       });
+                    },
+                    child: const Text("确定")),
+              ],
+            );
+          });
+    }
+
+    // 修改密码
+    _showModifyDialog() {
+      return showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('修改密码'),
+              content: Container(
+                height: 50,
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                            child: TextFormField(
+                          // 验证
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return '输入内容不能为空！';
+                            }
+                          },
+                          // style: const TextStyle(fontSize: 20),
+                          // decoration: const InputDecoration(
+                          //     border: OutlineInputBorder(),
+                          //     labelText: '请输入验证码'),
+                          onChanged: (value) {
+                            _password = value;
+                          },
+                        ))
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("取消"),
+                ),
+                TextButton(
+                    onPressed: () {
+                      // 密码不为空发送
+                      if (_password != '') {
+                        loginModel
+                            .modifyPassword(user.id, _password)
+                            .then((value) {
+                          var result = jsonDecode(value.toString());
+                          print(result);
+                          if (result['code'] == 200) {
+                            Fluttertoast.showToast(
+                                msg: "修改密码成功！",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.CENTER,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.green,
+                                textColor: Colors.white,
+                                fontSize: 16.0);
+                            Navigator.pop(context);
+                          } else {
+                            Fluttertoast.showToast(
+                                msg: "密码有误，请稍后再试！",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.CENTER,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                fontSize: 16.0);
+                            Navigator.pop(context);
+                          }
+                        });
+                      }
                     },
                     child: const Text("确定")),
               ],
@@ -99,9 +182,12 @@ class MyCenterView extends StatelessWidget {
                 Navigator.pushNamed(context, 'myInfoSettingView');
               },
             ),
-            const ListTile(
+            ListTile(
               leading: Icon(Icons.cached_sharp),
               title: Text('修改密码'),
+              onTap: () {
+                _showModifyDialog();
+              },
             ),
             ListTile(
               leading: Icon(Icons.logout),

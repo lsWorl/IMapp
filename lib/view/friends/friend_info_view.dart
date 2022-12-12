@@ -23,8 +23,6 @@ class _FriendInfoViewState extends State<FriendInfoView> {
     print(params);
     info = UserContacts.fromJson(params!['info']);
     // 判断当前用户是否是好友
-    print(params!['isFriend']);
-    print(info.is_out);
     buttonText =
         info.is_out == '1' && params!['isFriend'] ? buttonText : '添加好友';
   }
@@ -95,7 +93,8 @@ class _FriendInfoViewState extends State<FriendInfoView> {
                   ),
                   const Spacer(),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 100),
+                    padding:
+                        EdgeInsets.only(bottom: info.is_out == '1' ? 20 : 100),
                     child: ElevatedButton(
                       onPressed: _pressed,
                       style: ButtonStyle(
@@ -110,7 +109,28 @@ class _FriendInfoViewState extends State<FriendInfoView> {
                             color: Color.fromARGB(255, 227, 227, 227)),
                       ),
                     ),
-                  )
+                  ),
+                  info.is_out == '1'
+                      ? Padding(
+                          padding: const EdgeInsets.only(bottom: 100),
+                          child: ElevatedButton(
+                            onPressed: _deleteContact,
+                            style: ButtonStyle(
+                              backgroundColor:
+                                  ButtonStyleButton.allOrNull(Colors.red),
+                              padding: MaterialStateProperty.all(
+                                  const EdgeInsets.symmetric(
+                                      horizontal: 140.0, vertical: 12.0)),
+                            ),
+                            child: const Text(
+                              '删除好友',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  color: Color.fromARGB(255, 227, 227, 227)),
+                            ),
+                          ),
+                        )
+                      : Container()
                 ],
               ),
             ),
@@ -132,5 +152,9 @@ class _FriendInfoViewState extends State<FriendInfoView> {
         'room_key': info.room_key
       });
     }
+  }
+
+  _deleteContact() {
+    print('删除');
   }
 }

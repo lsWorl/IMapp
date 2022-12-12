@@ -18,6 +18,9 @@ class ContactsViewModel extends ChangeNotifier {
   // 与好友聊天信息
   List _friendsContactContent = [];
 
+  //记录聊天相差时间
+  DateTime _timeDifferent = DateTime(2017, 9, 7, 17, 30);
+
   // 修改是否同为好友状态
   void stateHandler(int index) {
     _friendsList[index]['is_out'] = '1';
@@ -35,12 +38,24 @@ class ContactsViewModel extends ChangeNotifier {
     return _friendsList;
   }
 
+  // 设置聊天时间
+  void setCommunicationTime(DateTime time, String roomKey) {
+    print('设置时间');
+    // 通过房间来实现存储到一个相同位置
+    PublicStorage publicStorage = new PublicStorage();
+    _friendsContactContent.add({'msg': time.toString()});
+    print(_friendsContactContent);
+    // 将数据存储到本地
+    publicStorage.setHistoryList(roomKey, _friendsContactContent);
+    notifyListeners();
+  }
+
   // 添加消息
   void addMsg(dynamic content, bool isSelf, String roomKey) {
     // 通过房间来实现存储到一个相同位置
     PublicStorage publicStorage = new PublicStorage();
     _friendsContactContent.add({'msg': content, 'isSender': isSelf});
-    print(roomKey);
+    print('添加消息');
     // 将数据存储到本地
     publicStorage.setHistoryList(roomKey, _friendsContactContent);
     notifyListeners();
@@ -61,7 +76,6 @@ class ContactsViewModel extends ChangeNotifier {
 
   // 获取本地消息后替换
   void replaceMsgContent(List content) {
-    print(content);
     _friendsContactContent = content;
     notifyListeners();
   }
@@ -88,5 +102,15 @@ class ContactsViewModel extends ChangeNotifier {
 
   List get friendsContactContent {
     return _friendsContactContent;
+  }
+
+  // 获取最近一次聊天时间
+  DateTime get timeDifferent {
+    return _timeDifferent;
+  }
+
+  set timeDifferent(DateTime time) {
+    _timeDifferent = time;
+    notifyListeners();
   }
 }

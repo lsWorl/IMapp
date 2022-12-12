@@ -20,6 +20,8 @@ class ChatContentView extends StatefulWidget {
 }
 
 class _ChatContentViewState extends State<ChatContentView> {
+  // 聊天类
+  ContactsViewModel _contactsViewModel = new ContactsViewModel();
   // 获取到的参数
   Map? params;
   ClientSocket clientSocket = ClientSocket();
@@ -72,12 +74,24 @@ class _ChatContentViewState extends State<ChatContentView> {
                   // 数量
                   itemCount: value.friendsContactContent.length,
                   itemBuilder: (context, index) {
-                    dynamic msg = value.friendsContactContent[index]['msg'];
                     bool isImage = false;
-                    // 判断消息是不是图片
-                    if (msg is String) {
-                      isImage = msg.contains('communications');
+                    bool isTime = false;
+                    // print(newnow);
+                    dynamic msg = value.friendsContactContent[index]['msg'];
+                    // print(msg);
+                    try {
+                      msg = DateTime.parse(msg);
+                      isTime = true;
+                    } catch (e) {
+                      // 判断消息是不是图片
+                      if (msg is String) {
+                        isImage = msg.contains('communications');
+                      }
+                      // print('报错');
+                      // print(e);
                     }
+
+                    // 判断是不是时间
                     // 判断是否包含图片路径或者是文件路径
                     return isImage
                         ? Container(
@@ -102,19 +116,28 @@ class _ChatContentViewState extends State<ChatContentView> {
                               ),
                             ),
                           )
-                        : Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 5),
-                            child: BubbleNormal(
-                              text: value.friendsContactContent[index]['msg'],
-                              isSender: value.friendsContactContent[index]
-                                  ['isSender'],
-                              color: value.friendsContactContent[index]
-                                      ['isSender']
-                                  ? const Color(0xFF1B97F3)
-                                  : const Color(0xFFE8E8EE),
-                              tail: true,
-                            ),
-                          );
+                        : isTime
+                            ? Center(
+                                child: DateChip(
+                                  date: msg,
+                                  color: Color(0x558AD3D5),
+                                ),
+                              )
+                            : Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 5),
+                                child: BubbleNormal(
+                                  text: value.friendsContactContent[index]
+                                      ['msg'],
+                                  isSender: value.friendsContactContent[index]
+                                      ['isSender'],
+                                  color: value.friendsContactContent[index]
+                                          ['isSender']
+                                      ? const Color(0xFF1B97F3)
+                                      : const Color(0xFFE8E8EE),
+                                  tail: true,
+                                ),
+                              );
                   },
                 );
               })),
@@ -135,6 +158,22 @@ class _ChatContentViewState extends State<ChatContentView> {
 
   _sendMessage(String value) async {
     if (value != '') {
+      // 设置发送的当前时间 如果用户有超过30分钟没有互相发送消息或者第一次发送消息就进行添加
+      final now = new DateTime.now();
+      // 如果等于这个时间说明第一次开始聊天或者重新登录了
+      if (_contactsViewModel.timeDifferent.toString() ==
+          '2017-09-07 17:30:00.000') {
+        _contactsViewModel.timeDifferent = now;
+        Provider.of<ContactsViewModel>(context, listen: false)
+            .setCommunicationTime(now, params!['room_key']);
+      } else {
+        print('添加时间');
+        // 如果不是则时间相减看相差是否大于1天 大于1天就重新赋值现在时间
+        if (now.difference(_contactsViewModel.timeDifferent).inDays > 0) {
+          Provider.of<ContactsViewModel>(context, listen: false)
+              .setCommunicationTime(now, params!['room_key']);
+        }
+      }
       // 发送消息给后端
       clientSocket.sendPrivateMsg(context, {
         'name': userInfo['name'],
